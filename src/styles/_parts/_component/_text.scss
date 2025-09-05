@@ -1,0 +1,13 @@
+@charset "utf-8";
+@use "@/styles/setting" as *;
+/*--------------------------------------------------------------------
+  @Component : テキスト
+----------------------------------------------------------------------*/
+.c-{
+  &errorTxt {
+    color: $alertColor;
+    font-size: .9em;
+    font-weight: bold;
+    line-height: 1.4;
+  }
+}

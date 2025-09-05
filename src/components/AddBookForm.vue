@@ -45,14 +45,14 @@ function resetForm(){
 }
 
 // 書籍追加
-function handleAddBook(addBook: BookWithId){
+function emitAddBook(addBook: BookWithId){
   emit('book-added', addBook);
   errors.book = '';
 }
 </script>
 
 <template>
-  <BaseForm v-bind:is-manual-mode="true" v-bind:reg-books="regBooks" v-bind:show-cover-actions="true" v-bind:book-cover="bookCoverUrl" v-bind:errors="errors" v-bind:reset="formReset" v-bind:class="[errors.book? 'u-mb1':'u-mb2']" v-on:submitted="handleAddBook" v-on:duplicate-found="handleShowError" v-on:cover-searched="searchBookCover" v-on:cover-removed="removeCover" />
+  <BaseForm v-bind:is-manual-mode="true" v-bind:reg-books="regBooks" v-bind:show-cover-actions="true" v-bind:book-cover="bookCoverUrl" v-bind:errors="errors" v-bind:reset="formReset" v-bind:class="[errors.book? 'u-mb1':'u-mb2']" v-on:submitted="emitAddBook" v-on:duplicate-found="handleShowError" v-on:cover-searched="searchBookCover" v-on:cover-removed="removeCover" />
 
   <p v-if="errors.book" class="c-errorTxt u-txtC u-mb2">{{ errors.book }}</p>
   <div class="controlBtns">

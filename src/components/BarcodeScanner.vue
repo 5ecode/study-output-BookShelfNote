@@ -167,7 +167,7 @@ function isAlreadyAdded(isbn: string) {
 }
 
 // バーコードで読み取った書籍を追加
-function handleAddScannedBooks(addBooks: BookData[]){
+function emitAddScannedBooks(addBooks: BookData[]){
   emit('scanned-books-added', addBooks);
   errors.search = '';
   scannedIsbns.value = [];
@@ -181,7 +181,7 @@ function handleAddScannedBooks(addBooks: BookData[]){
   <p v-if="results && results.length === 0" class="u-txtC">{{ notify }}</p>
 
   <div v-if="results && results.length > 0" class="u-mb2">
-    <SearchList v-bind:reg-books="regBooks" v-bind:books="results" v-on:books-added="handleAddScannedBooks" />
+    <SearchList v-bind:reg-books="regBooks" v-bind:books="results" v-on:books-added="emitAddScannedBooks" />
   </div>
 </template>
 

@@ -86,13 +86,13 @@ function resetSearch(){
 }
 
 // ISBN入力した書籍追加
-function handleAddBook(addBook: BookWithId){
+function emitAddBook(addBook: BookWithId){
   emit('book-added', addBook);
   resetSearch();
 }
 
 // バーコードで読み取った書籍追加
-function handleAddScannedBooks(addBooks: BookData[]){
+function emitAddScannedBooks(addBooks: BookData[]){
   emit('scanned-books-added', addBooks);
   resetSearch();
 }
@@ -117,7 +117,7 @@ function handleAddScannedBooks(addBooks: BookData[]){
     <p v-if="results && results.length === 0" class="u-txtC u-mb2">{{ notify }}</p>
 
     <div v-if="results && results.length > 0" class="u-mb2">
-      <BaseForm v-bind:reg-books="regBooks" v-bind:results-books="results" v-bind:show-cover-actions="false" v-bind:readonly-fields="{ isbn: true }" v-bind:errors="errors" v-on:submitted="handleAddBook" />
+      <BaseForm v-bind:reg-books="regBooks" v-bind:results-books="results" v-bind:show-cover-actions="false" v-bind:readonly-fields="{ isbn: true }" v-bind:errors="errors" v-on:submitted="emitAddBook" />
 
       <div class="addControl">
         <div class="addControl_btns u-txtC">
@@ -129,7 +129,7 @@ function handleAddScannedBooks(addBooks: BookData[]){
   </template>
 
   <template v-if="method === 'scanner'">
-    <BarcodeScanner v-bind:method="method" v-bind:reg-books="regBooks" v-on:scanned-books-added="handleAddScannedBooks" />
+    <BarcodeScanner v-bind:method="method" v-bind:reg-books="regBooks" v-on:scanned-books-added="emitAddScannedBooks" />
   </template>
 </template>
 

@@ -1,0 +1,40 @@
+@charset 'utf-8';
+@use "@/styles/setting" as *;
+/* --------------------------------------------------------------------
+Utility : パーツではない便利系
+---------------------------------------------------------------------- */
+.u-{
+  &fontB {
+    font-weight: bold;
+  }
+  &txtC {
+    text-align: center;
+  }
+  &txtR {
+    text-align: right;
+  }
+  &txtL {
+    text-align: left;
+  }
+  &mt2 {
+    margin-top: 2em;
+  }
+  &mt1 {
+    margin-top: 1em;
+  }
+  &mb0 {
+    margin-bottom: 0;
+  }
+  &mb1 {
+    margin-bottom: 1em;
+  }
+  &mb2 {
+    margin-bottom: 2em;
+  }
+  &omission {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
+}

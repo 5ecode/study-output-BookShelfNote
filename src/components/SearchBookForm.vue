@@ -135,7 +135,7 @@ function resetSearch(){
 }
 
 // 書籍を追加
-function handleAddBooks(books:BookData[]){
+function emitAddBooks(books:BookData[]){
   emit('books-added', books);
   selectedIds.value = [];
 }
@@ -162,7 +162,7 @@ function handleAddBooks(books:BookData[]){
   <p v-if="results && results.length === 0" class="u-txtC u-mb2">{{ notify }}</p>
 
   <div v-if="results && results.length > 0" class="u-mb2">
-    <SearchList v-bind:reg-books="regBooks" v-bind:books="results" v-on:books-added="handleAddBooks" v-on:search-reset="resetSearch">
+    <SearchList v-bind:reg-books="regBooks" v-bind:books="results" v-on:books-added="emitAddBooks" v-on:search-reset="resetSearch">
       <template #more>
         <div v-if="hasMore" class="btnHolder">
           <button class="moreBtn" v-on:click="fetchBooks">Show more</button>

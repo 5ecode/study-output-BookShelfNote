@@ -26,16 +26,16 @@ onMounted(() => {
 /* function
 ---------------------------------- */
 // 書籍を追加
-function addBook(formData: BookData) {
+function handleAddBook(formData: BookData) {
   bookStore.addBook({
     id: bookStore.nextId,
     ...formData,
   });
 }
 
-// 検索結果を追加
-function addSearchBooks(bookList: BookData[]) {
-  bookStore.addSearchBooks(bookList);
+// 選択した書籍を追加
+function handleAddSelectedBooks(bookList: BookData[]) {
+  bookStore.addSelectedBooks(bookList);
 }
 </script>
 
@@ -47,9 +47,9 @@ function addSearchBooks(bookList: BookData[]) {
     <label v-bind:class="{ 'is-active': selected === 'manual' }"><input v-model="selected" type="radio" value="manual">手入力</label>
   </div>
 
-  <SearchBookForm v-if="selected === 'search'" v-bind:reg-books="bookStore.books" v-on:books-added="addSearchBooks" />
-  <IsbnSearchForm v-else-if="selected === 'isbn'" v-bind:reg-books="bookStore.books" v-on:book-added="addBook" v-on:scanned-books-added="addSearchBooks" />
-  <AddBookForm v-else v-bind:reg-books="bookStore.books" v-on:book-added="addBook" />
+  <SearchBookForm v-if="selected === 'search'" v-bind:reg-books="bookStore.books" v-on:books-added="handleAddSelectedBooks" />
+  <IsbnSearchForm v-else-if="selected === 'isbn'" v-bind:reg-books="bookStore.books" v-on:book-added="handleAddBook" v-on:scanned-books-added="handleAddSelectedBooks" />
+  <AddBookForm v-else v-bind:reg-books="bookStore.books" v-on:book-added="handleAddBook" />
 </template>
 
 <style lang="scss" scoped>

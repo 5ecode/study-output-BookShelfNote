@@ -14,7 +14,7 @@ export const useBookStore = defineStore('book', () => {
     return Math.max(...books.value.map(book => book.id)) + 1;
   });
 
-  // 書籍追加（手入力）
+  // 書籍を追加
   function addBook(book: BookWithId) {
     const newBook: BookWithId = {
       ...book,
@@ -24,8 +24,8 @@ export const useBookStore = defineStore('book', () => {
     saveToStorage();
   }
 
-  // 書籍追加（検索入力）
-  function addSearchBooks(bookList: BookData[]) {
+  // 選択した書籍を追加
+  function addSelectedBooks(bookList: BookData[]) {
     for (const book of bookList) {
       books.value.unshift({
         id: nextId.value,
@@ -104,7 +104,7 @@ export const useBookStore = defineStore('book', () => {
     storageKey,
     nextId,
     addBook,
-    addSearchBooks,
+    addSelectedBooks,
     loadFromStorage,
     saveToStorage,
     updateBook,

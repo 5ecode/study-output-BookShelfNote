@@ -55,17 +55,17 @@ function formatDate(dateStr: string | undefined): string {
 }
 
 // モーダルを閉じる
-function handleClose() {
+function emitClose() {
   emit('modal-closed');
 }
 
 // 編集モーダルからの更新データを送る
-function handleUpdate(updatedBook: BookWithId) {
+function emitUpdate(updatedBook: BookWithId) {
   emit('book-updated', updatedBook);
 }
 
 // 削除実行イベントを送る
-function handleDelete(){
+function emitDelete(){
   if(props.book){
     emit('book-deleted', props.book);
   }
@@ -73,17 +73,17 @@ function handleDelete(){
 </script>
 
 <template>
-  <BaseModal v-bind:is-show="isShow" v-bind:title="modalTitle()" v-bind:show-close-button="true" class="u-mb1" v-on:modal-closed="handleClose">
+  <BaseModal v-bind:is-show="isShow" v-bind:title="modalTitle()" v-bind:show-close-button="true" class="u-mb1" v-on:modal-closed="emitClose">
     <template v-if="(modalMode === 'detail' || modalMode === 'confirm-delete') && book">
       <div v-bind:class="{'is-lent':book.lentStatus === 'lent' , 'is-returned':book.lentStatus === 'returned'}" class="bookPreview">
         <p class="bookCover"><img v-if="book.image" v-bind:src="book.image" alt="書影"></p>
         <p class="bookName"><strong>{{ book.title }}</strong></p>
         <p v-if="book.seriesName">
-        <strong>シリーズ：</strong><router-link :to="`/series/${book.seriesName}`" class="c-txtLink" v-on:click.prevent="handleClose">{{ book.seriesName }}</router-link></p>
+        <strong>シリーズ：</strong><router-link :to="`/series/${book.seriesName}`" class="c-txtLink" v-on:click.prevent="emitClose">{{ book.seriesName }}</router-link></p>
         <p>
           <strong>著者：</strong>
           <template v-if="book.authors && book.authors.length > 0">
-            <router-link v-for="author in book.authors" v-bind:key="author" :to="`/author/${author}`" class="authorTxt c-txtLink" v-on:click.prevent="handleClose">{{ author }}</router-link>
+            <router-link v-for="author in book.authors" v-bind:key="author" :to="`/author/${author}`" class="authorTxt c-txtLink" v-on:click.prevent="emitClose">{{ author }}</router-link>
           </template>
           <template v-else>不明</template>
         </p>
@@ -99,7 +99,7 @@ function handleDelete(){
     </template>
 
     <template v-if="modalMode === 'edit' && book">
-      <BookEditForm v-bind:book="book" v-on:book-updated="handleUpdate" />
+      <BookEditForm v-bind:book="book" v-on:book-updated="emitUpdate" />
     </template>
 
     <template #actions>
@@ -108,12 +108,12 @@ function handleDelete(){
         <button class="c-btn c-btn--primary" v-on:click="$emit('confirm-delete-opened')">削除</button>
       </template>
       <template v-if="modalMode === 'edit'">
-        <button class="c-btn c-btn--secondary" v-on:click="handleClose">キャンセル</button>
+        <button class="c-btn c-btn--secondary" v-on:click="emitClose">キャンセル</button>
         <button type="submit" form="baseForm" class="c-btn c-btn--primary">保存</button>
       </template>
       <template v-else-if="modalMode === 'confirm-delete'">
-        <button class="c-btn c-btn--secondary" v-on:click="handleClose">キャンセル</button>
-        <button class="c-btn c-btn--primary" v-on:click="handleDelete">削除</button>
+        <button class="c-btn c-btn--secondary" v-on:click="emitClose">キャンセル</button>
+        <button class="c-btn c-btn--primary" v-on:click="emitDelete">削除</button>
       </template>
     </template>
   </BaseModal>

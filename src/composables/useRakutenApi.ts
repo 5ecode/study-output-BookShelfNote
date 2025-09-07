@@ -16,13 +16,19 @@ interface RakutenApiResponse {
   Items: { Item: RakutenApiItem }[]
 }
 
-const RAKUTEN_PROXY_URL = import.meta.env.VITE_RAKUTEN_PROXY_URL;
+const BASE_URL = 'https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404';
+const APP_ID = import.meta.env.VITE_RAKUTEN_APP_ID;
 
 // データ取得
 export async function fetchRakutenRaw(params: Record<string, string>): Promise<{ books: CombinedBookData[]; totalCount: number }> {
-  const searchParams = new URLSearchParams({ ...params });
+  const searchParams = new URLSearchParams({
+    format: 'json',
+    applicationId: APP_ID,
+    outOfStockFlag: '1',
+    ...params,
+  });
 
-  const res = await fetch(`${RAKUTEN_PROXY_URL}?${searchParams.toString()}`);
+  const res = await fetch(`${BASE_URL}?${searchParams.toString()}`);
   const data:RakutenApiResponse = await res.json();
 
   const searchBooks: RakutenBook[] = data.Items.map((entry) => {

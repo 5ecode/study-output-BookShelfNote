@@ -1,16 +1,15 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import viteImagemin from 'vite-plugin-imagemin'
-import { fileURLToPath, URL } from 'node:url'
-import fs from 'fs'
-import path from 'path'
-// https://vite.dev/config/
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import viteImagemin from 'vite-plugin-imagemin';
+import { fileURLToPath, URL } from 'node:url';
+import fs from 'fs';
+import path from 'path';
 
 export default defineConfig({
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
   plugins: [
     vue(),
@@ -21,19 +20,19 @@ export default defineConfig({
       svgo: {
         plugins: [
           { name: 'removeViewBox' },
-          { name: 'removeEmptyAttrs', active: false }
-        ]
-      }
-    })
+          { name: 'removeEmptyAttrs', active: false },
+        ],
+      },
+    }),
   ],
   css: {
     preprocessorOptions: {
       scss: {
         additionalData: `
           @use "@/styles/setting" as *;
-        `
-      }
-    }
+        `,
+      },
+    },
   },
   server: {
     host: true,
@@ -41,8 +40,8 @@ export default defineConfig({
       key: fs.readFileSync(path.resolve(__dirname, 'certs/localhost-key.pem')),
       cert: fs.readFileSync(path.resolve(__dirname, 'certs/localhost.pem')),
     },
-    port: 5173
-  }
+    port: 5173,
+  },
 
-})
+});
 

@@ -42,9 +42,9 @@ function handleAddSelectedBooks(bookList: BookData[]) {
 <template>
   <h2 class="u-mb1 u-txtC"><BookPlus :size="28" style="vertical-align: sub;" />書籍を追加</h2>
   <div class="tabNavi u-mb1">
-    <label v-bind:class="{ 'is-active': selected === 'search' }"><input v-model="selected" type="radio" value="search">作品名・著者名検索</label>
-    <label v-bind:class="{ 'is-active': selected === 'isbn' }"><input v-model="selected" type="radio" value="isbn">ISBN検索</label>
-    <label v-bind:class="{ 'is-active': selected === 'manual' }"><input v-model="selected" type="radio" value="manual">手入力</label>
+    <label v-on:keydown.enter="selected = 'search'" v-bind:class="{ 'is-active': selected === 'search' }" tabindex="0"><input v-model="selected" type="radio" value="search">作品名・著者名検索</label>
+    <label v-on:keydown.enter="selected = 'isbn'" v-bind:class="{ 'is-active': selected === 'isbn' }" tabindex="0"><input v-model="selected" type="radio" value="isbn">ISBN検索</label>
+    <label v-on:keydown.enter="selected = 'manual'" v-bind:class="{ 'is-active': selected === 'manual' }" tabindex="0"><input v-model="selected" type="radio" value="manual">手入力</label>
   </div>
 
   <SearchBookForm v-if="selected === 'search'" v-bind:reg-books="bookStore.books" v-on:books-added="handleAddSelectedBooks" />
@@ -71,11 +71,15 @@ function handleAddSelectedBooks(bookList: BookData[]) {
     cursor: pointer;
     user-select: none;
     transition: border-color .3s, background-color .3s;
-  }
-  .is-active {
-    border-color: $subColor;
-    background-color: $subColor;
-    color: white;
+    &:hover,
+    &.is-active {
+      border-color: $subColor;
+      background: $subColor;
+      color: #fff;
+    }
+    &:focus-visible{
+      outline-color: $mainColor;
+    }
   }
   input[type='radio'] {
     display: none;

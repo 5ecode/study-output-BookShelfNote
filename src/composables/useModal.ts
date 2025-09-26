@@ -1,20 +1,22 @@
 /* モーダル
 -------------------------------------------- */
+import { ref, watch, nextTick } from 'vue';
 import { useBookStore } from '../stores/bookStore';
-import { ref, watch } from 'vue';
 import type { BookWithId } from '../types';
 
 export function useModal() {
   const bookStore = useBookStore();
   const showDetailModal = ref(false);
   const detailTargetBook = ref<BookWithId | null>(null);
+  const triggerElement = ref<HTMLElement | null>(null);
   const modalMode = ref<'detail' | 'edit' | 'confirm-delete'>('detail');
 
   // 詳細モーダル開く
-  function openDetailModal(book: BookWithId){
+  function openDetailModal(book: BookWithId, e: Event){
     detailTargetBook.value = book;
     modalMode.value = 'detail';
     showDetailModal.value = true;
+    triggerElement.value = e.currentTarget as HTMLElement;
   }
 
   // 編集モード切替
@@ -28,10 +30,19 @@ export function useModal() {
   }
 
   // モーダル閉じる
-  function closeModal(){
+  async function closeModal(){
     detailTargetBook.value = null;
     modalMode.value = 'detail';
     showDetailModal.value = false;
+
+    await nextTick();
+    const el = triggerElement.value;
+    if (!el) return;
+
+    if (document.body.contains(el)) {
+      el.focus();
+      return;
+    }
   }
 
   // 書籍更新

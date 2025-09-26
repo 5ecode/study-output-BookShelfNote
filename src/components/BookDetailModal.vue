@@ -82,8 +82,11 @@ function emitDelete(){
         <strong>シリーズ：</strong><router-link :to="`/series/${book.seriesName}`" class="c-txtLink" v-on:click.prevent="emitClose">{{ book.seriesName }}</router-link></p>
         <p>
           <strong>著者：</strong>
-          <template v-if="book.authors && book.authors.length > 0">
-            <router-link v-for="author in book.authors" v-bind:key="author" :to="`/author/${author}`" class="authorTxt c-txtLink" v-on:click.prevent="emitClose">{{ author }}</router-link>
+          <template v-if="book.authors && book.authors.length > 0" class="authorList">
+            <template v-for="(author, index) in book.authors" v-bind:key="author" class="authorList_item">
+              <router-link :to="`/author/${author}`" class="c-txtLink" v-on:click.prevent="emitClose">{{ author }}</router-link>
+              <span v-if="(book.authors.length - 1) > index">,&nbsp;</span>
+            </template>
           </template>
           <template v-else>不明</template>
         </p>
@@ -158,18 +161,5 @@ function emitDelete(){
 }
 .bookName{
   font-size: rem(18);
-}
-.authorTxt{
-  + .authorTxt{
-    position: relative;
-    margin-left: .5em;
-    &::before{
-      display: inline-block;
-      position: absolute;
-      left: -.5em;
-      content: ", ";
-      color: $baseColor;
-    }
-  }
 }
 </style>

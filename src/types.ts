@@ -12,7 +12,7 @@ export interface BookData {
   authors: string[];
   date: string | null;
   image: string | null;
-  lentStatus: 'none' | 'lent' | 'returned';
+  lentStatus: LentStatus;
   isbn: string | null;
   seriesName: string | null
 }

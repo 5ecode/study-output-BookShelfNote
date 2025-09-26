@@ -12,7 +12,7 @@ const props = defineProps<{
 /* emit
 ---------------------------------- */
 const emit = defineEmits<{
-  (e: 'detail-opened', book: BookWithId): void
+  (e: 'detail-opened', book: BookWithId, $event: Event): void
   (e: 'confirm-delete-opened', book: BookWithId): void
   (e: 'edit-opened', book: BookWithId): void
   (e: 'rent-changed', book: BookWithId): void
@@ -30,16 +30,16 @@ function adjustAuthors(authors: string[]){
 }
 
 // 詳細モーダルを開く
-function showDetail(book: BookWithId){
+function showDetail(book: BookWithId, $event: Event){
   if(props.listMode === 'view'){
-    emit('detail-opened', book);
+    emit('detail-opened', book, $event);
   }
 }
 </script>
 
 <template>
   <ul v-if="books" class="bookList">
-    <li v-for="book in books" v-bind:key="book.id" v-bind:class="{'is-lent':book.lentStatus === 'lent' , 'is-returned':book.lentStatus === 'returned', 'is-clickable': listMode === 'view'}" v-bind:title="book.title" class="bookList_item " v-on:click="showDetail(book)">
+    <li v-for="book in books" v-bind:key="book.id" v-bind:class="{'is-lent':book.lentStatus === 'lent' , 'is-returned':book.lentStatus === 'returned', 'is-clickable': listMode === 'view'}" v-bind:title="book.title" class="bookList_item " v-bind:tabIndex="listMode === 'view' ? 0 : null" v-on:click="showDetail(book, $event)" v-on:keydown.enter="showDetail(book, $event)">
       <p class="bookCover"><img v-if="book.image" v-bind:src="book.image" alt="書影"></p>
       <div class="bookInfo">
         <div class="bookMeta">
@@ -67,6 +67,10 @@ function showDetail(book: BookWithId){
     column-gap: 10px;
     width: 100%;
     line-height: 1.5;
+    &:focus-visible{
+      outline-color: $mainColor;
+      outline-offset: 4px;
+    }
     @media screen and (min-width: 540px) {
       display: block;
     }

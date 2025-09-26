@@ -43,6 +43,10 @@ const authorText = ref('');
 
 /* reactivity
 ---------------------------------- */
+const fileInput = ref<HTMLInputElement | null>(null);
+
+/* reactivity
+---------------------------------- */
 // フォームの値
 const form = reactive({
   id: 0,
@@ -147,6 +151,11 @@ function handleImgUpload(event: Event) {
   reader.readAsDataURL(file);
 }
 
+// キーボード操作用
+function triggerFileInput() {
+  fileInput.value?.click();
+}
+
 // 重複登録チェック
 function isAlreadyAdded(book: typeof form) {
   let library = props.regBooks;
@@ -225,12 +234,12 @@ function removeCover(){
         <dd class="holder">
           <div class="bookCover">
             <img v-if="form.image" v-bind:src="form.image" alt="プレビュー">
-            <button v-if="form.image && showCoverActions" class="cancelBtn" v-on:click="removeCover" v-on:click.prevent><X :size="30" /></button>
+            <button v-if="form.image && showCoverActions" class="cancelBtn" v-on:click="removeCover" v-on:keydown.enter="removeCover" v-on:click.prevent><X :size="30" /></button>
           </div>
           <div v-if="showCoverActions" class="holder_control">
-            <button v-if="!isManualMode" class="icoBtn" v-on:click="$emit('cover-searched', form.isbn)" v-on:click.prevent><DiamondPlus :size="28" />ISBNから取得</button>
+            <button v-if="!isManualMode" class="icoBtn" v-on:click="$emit('cover-searched', form.isbn)" v-on:keydown.enter="$emit('cover-searched', form.isbn)" v-on:click.prevent><DiamondPlus :size="28" />ISBNから取得</button>
             <p v-if="errors.image" class="c-errorTxt">{{ errors.image }}</p>
-            <label class="icoBtn"><ImageUp :size="28" /><input type="file" accept="image/*" v-on:change="handleImgUpload">アップロード</label>
+            <label role="button" v-on:keydown.enter="triggerFileInput" class="icoBtn" tabindex="0"><ImageUp :size="28" /><input type="file" accept="image/*" ref="fileInput" v-on:change="handleImgUpload">アップロード</label>
           </div>
         </dd>
       </dl>
@@ -323,6 +332,15 @@ function removeCover(){
   font-weight: bold;
   color: $mainColor;
   line-height: 1;
+  transition: color .3s, background-color .3s;
+  &:hover{
+    background: $mainColor;
+    color: #fff;
+  }
+  &:focus-visible{
+    outline-color: $mainColor;
+    outline-offset: -3px;
+  }
 }
 input[type="file"]{
   display: none;

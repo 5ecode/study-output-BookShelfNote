@@ -1,6 +1,6 @@
 <!-- src/components/BaseModal.vue -->
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 /* props
 ---------------------------------- */
@@ -21,6 +21,10 @@ defineEmits<{
 ---------------------------------- */
 const allowedColors = ['#d32f2f'];
 
+/* reactivity
+---------------------------------- */
+const modalRef = ref<HTMLDivElement | null>(null);
+
 /* computed
 ---------------------------------- */
 const titleColor = computed(() => {
@@ -29,11 +33,56 @@ const titleColor = computed(() => {
     ? props.title[1]
     : '#2c3e50'; // デフォルト値
 });
+
+/* watch
+---------------------------------- */
+// slot内のbutton要素にフォーカスを移す
+watch(() => props.isShow, (val) => {
+  if (val) {
+    setTimeout(() => {
+      if (modalRef.value) {
+        const focusable = getFocusableElements(modalRef.value);
+        focusable[0].focus();
+      }
+    }, 0);
+  }
+});
+
+/* function
+---------------------------------- */
+// モーダル内のフォーカス対象取得
+function getFocusableElements(container: HTMLElement | null): HTMLElement[] {
+  if (!container) return [];
+  return Array.from(
+    container.querySelectorAll<HTMLElement>(
+      'a[href], button, input, select, [tabindex]:not([tabindex="-1"])',
+    ),
+  ).filter(el => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'));
+}
+
+// モーダル内でフォーカスをループ
+function trapFocus(event: KeyboardEvent) {
+  if (event.key !== 'Tab') return;
+
+  if (props.isShow) {
+    const focusable = getFocusableElements(modalRef.value);
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+}
 </script>
 
 <template>
-  <div v-if="isShow" class="modalOverlay" v-on:click.self="$emit('modal-closed')">
-    <div class="modalContent">
+  <div v-if="isShow" class="modalOverlay" v-on:click.self="$emit('modal-closed')" v-on:keydown="trapFocus">
+    <div ref="modalRef" class="modalContent">
       <template v-if="title">
         <header class="modalHeader">
           <h3 v-bind:style="{ color: titleColor }">{{ title[0] }}</h3>

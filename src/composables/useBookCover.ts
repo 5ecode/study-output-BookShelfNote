@@ -1,8 +1,8 @@
 /* 表紙画像取得
 -------------------------------------------- */
 import { ref, reactive } from 'vue';
-import type { BookWithId } from '../types';
 import { fetchBookCover } from '../composables/useRakutenApi';
+import type { BookWithId } from '../types';
 
 export function useBookCover(registeredBooks: BookWithId[], editId: number | null = null) {
   const editbookId = editId; // 編集時のみ

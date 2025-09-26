@@ -13,6 +13,7 @@
       border-style: double;
       border-width: 4px;
       background: $mainColor;
+      transition: all .3s;
       color: #fff;
       @include hover {
         border-color: $mainColor;
@@ -24,6 +25,7 @@
     background-color: #f5f5f5;
     color: #333;
     border-color: #ccc;
+    transition: background-color .3s;
       @include hover {
         background-color: #e0e0e0;
       }

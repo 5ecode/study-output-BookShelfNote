@@ -42,7 +42,8 @@ watch(() => props.groupTitle, (newVal) => {
 const {
   showDetailModal,
   detailTargetBook,
-  modalMode,openDetailModal,
+  modalMode,
+  openDetailModal,
   switchToEdit,
   switchToConfirmDelete,
   closeModal,
@@ -124,5 +125,13 @@ function cancelEditing() {
   font-weight: bold;
   color: $mainColor;
   line-height: 1;
+  &:hover{
+    background: $mainColor;
+    color: #fff;
+  }
+  &:focus-visible{
+    outline-color: $mainColor;
+    outline-offset: -2px;
+  }
 }
 </style>

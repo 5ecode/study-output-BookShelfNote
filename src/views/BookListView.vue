@@ -93,7 +93,7 @@ const {
     <p v-if="filteredBooks.length === 0" class="u-mb2 u-txtC">該当する書籍が見つかりませんでした。</p>
   </div>
 
-  <div v-if="uiStore.listMode === 'delete'" class="reset u-txtC">
+  <div v-if="uiStore.listMode === 'delete' && filteredBooks.length > 0" class="reset u-txtC">
     <button class="c-btn c-btn--secondary" v-on:click="reset">リストを削除</button>
   </div>
 

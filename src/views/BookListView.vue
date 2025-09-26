@@ -90,7 +90,12 @@ const {
 
     <BookItem v-bind:books="filteredBooks" v-bind:list-mode="uiStore.listMode" v-on:detail-opened="openDetailModal" v-on:edit-opened="openEditModal" v-on:confirm-delete-opened="openDeleteModal" />
 
-    <p v-if="filteredBooks.length === 0" class="u-mb2 u-txtC">該当する書籍が見つかりませんでした。</p>
+    <div v-if="filteredBooks.length === 0" class="noBooks u-txtC">
+      <p class="u-mb1">該当する書籍が見つかりませんでした。</p>
+      <!-- Rakuten Web Services Attribution Snippet FROM HERE -->
+      <p><a href="https://developers.rakuten.com/" target="_blank">Supported by Rakuten Developers</a></p>
+      <!-- Rakuten Web Services Attribution Snippet TO HERE -->
+    </div>
   </div>
 
   <div v-if="uiStore.listMode === 'delete' && filteredBooks.length > 0" class="reset u-txtC">
@@ -129,5 +134,13 @@ const {
 
 .reset {
   margin-top: 40px;
+}
+
+.noBooks {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
 }
 </style>

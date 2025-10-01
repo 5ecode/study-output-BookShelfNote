@@ -1,5 +1,6 @@
 <!-- src/components/BaseModal.vue -->
 <script setup lang="ts">
+import { X } from 'lucide-vue-next';
 import { ref, computed, watch } from 'vue';
 
 /* props
@@ -20,6 +21,7 @@ defineEmits<{
 /* constant
 ---------------------------------- */
 const allowedColors = ['#d32f2f'];
+const titleId = 'modalTitle';
 
 /* reactivity
 ---------------------------------- */
@@ -81,19 +83,13 @@ function trapFocus(event: KeyboardEvent) {
 </script>
 
 <template>
-  <div v-if="isShow" class="modalOverlay" v-on:click.self="$emit('modal-closed')" v-on:keydown="trapFocus">
-    <div ref="modalRef" class="modalContent">
-      <template v-if="title">
-        <header class="modalHeader">
-          <h3 v-bind:style="{ color: titleColor }">{{ title[0] }}</h3>
-          <button v-if="showCloseButton" class="closeBtn" v-on:click="$emit('modal-closed')">×</button>
-        </header>
-      </template>
-      <template v-else>
-        <div class="u-txtR">
-          <button v-if="showCloseButton" class="closeBtn" v-on:click="$emit('modal-closed')">×</button>
-        </div>
-      </template>
+  <div v-if="isShow" class="modalOverlay" v-on:click.self="$emit('modal-closed')" v-on:keydown="trapFocus" v-on:keydown.esc="$emit('modal-closed')">
+    <div ref="modalRef" role="dialog" aria-modal="true" v-bind:aria-labelledby="title ? titleId : undefined" v-bind:aria-label="title ? undefined : 'ダイアログ'" class="modalContent">
+      <div :class="['modalHeader',title? 'modalHeader--bdb': '']">
+        <h3 v-if="title" v-bind:id="titleId" v-bind:style="{ color: titleColor }">{{ title[0] }}</h3>
+
+        <button v-if="showCloseButton" class="closeBtn u-mlAuto" v-on:click="$emit('modal-closed')"><X :size="28" /></button>
+      </div>
       <div class="modalBody">
         <slot></slot>
       </div>
@@ -143,9 +139,12 @@ body.is-modal{
 .modalHeader{
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ccc;
   margin-bottom: 10px;
+  padding-bottom: 8px;
+  line-height: 1.2;
+  &--bdb{
+    border-bottom: 1px solid #ccc;
+  }
 }
 
 .modalBody{
@@ -160,9 +159,10 @@ body.is-modal{
 }
 
 .closeBtn{
+  display: flex;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  padding: 0;
   cursor: pointer;
 }
 </style>

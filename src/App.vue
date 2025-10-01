@@ -37,9 +37,9 @@ function goList() {
       <h1 class="title">BookShelfNote</h1>
 
       <div v-bind:class="[isAddPage ? 'is-hidden' : '']" class="navi">
-        <button v-bind:class="{ 'is-active': uiStore.listMode === 'view' }" v-on:click="uiStore.setListMode('view')" class="navi_btn"><Library :size="28" />通常表示</button>
-        <button v-bind:class="{ 'is-active': uiStore.listMode === 'edit' }"  v-on:click="uiStore.setListMode('edit')" class="navi_btn"><SquarePen :size="28" />編集モード</button>
-        <button v-bind:class="{ 'is-active': uiStore.listMode === 'delete' }"  v-on:click="uiStore.setListMode('delete')" class="navi_btn"><Trash2 :size="28" />削除モード</button>
+        <button v-bind:class="{ 'is-active': uiStore.listMode === 'view' }" v-bind:aria-pressed="uiStore.listMode === 'view'" v-on:click="uiStore.setListMode('view')" class="navi_btn"><Library :size="28" />通常表示</button>
+        <button v-bind:class="{ 'is-active': uiStore.listMode === 'edit' }" v-bind:aria-pressed="uiStore.listMode === 'edit'" v-on:click="uiStore.setListMode('edit')" class="navi_btn"><SquarePen :size="28" />編集モード</button>
+        <button v-bind:class="{ 'is-active': uiStore.listMode === 'delete' }" v-bind:aria-pressed="uiStore.listMode === 'delete'" v-on:click="uiStore.setListMode('delete')" class="navi_btn"><Trash2 :size="28" />削除モード</button>
       </div>
 
       <button v-if="isListPage" v-on:click="goAdd" class="icoBtn"><BookPlus :size="28" :stroke-width="1.75" /></button>

@@ -42,9 +42,11 @@ function handleAddSelectedBooks(bookList: BookData[]) {
 <template>
   <h2 class="u-mb1 u-txtC"><BookPlus :size="28" style="vertical-align: sub;" />書籍を追加</h2>
   <div class="tabNavi u-mb1">
-    <label v-on:keydown.enter="selected = 'search'" v-bind:class="{ 'is-active': selected === 'search' }" tabindex="0"><input v-model="selected" type="radio" value="search">作品名・著者名検索</label>
-    <label v-on:keydown.enter="selected = 'isbn'" v-bind:class="{ 'is-active': selected === 'isbn' }" tabindex="0"><input v-model="selected" type="radio" value="isbn">ISBN検索</label>
-    <label v-on:keydown.enter="selected = 'manual'" v-bind:class="{ 'is-active': selected === 'manual' }" tabindex="0"><input v-model="selected" type="radio" value="manual">手入力</label>
+    <button v-bind:class="['tabBtn', { 'is-active': selected === 'search' }]" @click="selected = 'search'" v-bind:aria-pressed="selected === 'search'">作品名・著者名検索</button>
+
+    <button v-bind:class="['tabBtn', { 'is-active': selected === 'isbn' }]" @click="selected = 'isbn'" v-bind:aria-pressed="selected === 'isbn'">ISBN検索</button>
+
+    <button v-bind:class="['tabBtn', { 'is-active': selected === 'manual' }]" @click="selected = 'manual'" v-bind:aria-pressed="selected === 'manual'">手入力</button>
   </div>
 
   <SearchBookForm v-if="selected === 'search'" v-bind:reg-books="bookStore.books" v-on:books-added="handleAddSelectedBooks" />
@@ -60,29 +62,26 @@ function handleAddSelectedBooks(bookList: BookData[]) {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
   }
-  label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1 0 auto;
-    padding: 5px;
-    border: 2px solid #ccc;
-    border-radius: 3px;
-    cursor: pointer;
-    user-select: none;
-    transition: border-color .3s, background-color .3s;
-    &:hover,
-    &.is-active {
-      border-color: $subColor;
-      background: $subColor;
-      color: #fff;
-    }
-    &:focus-visible{
-      outline-color: $mainColor;
-    }
+}
+.tabBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 0 auto;
+  padding: 5px;
+  border: 2px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color .3s, background-color .3s;
+  &:hover,
+  &.is-active {
+    border-color: $subColor;
+    background: $subColor;
+    color: #fff;
   }
-  input[type='radio'] {
-    display: none;
+  &:focus-visible{
+    outline-color: $mainColor;
   }
 }
 </style>

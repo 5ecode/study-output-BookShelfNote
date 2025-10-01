@@ -88,7 +88,7 @@ function trapFocus(event: KeyboardEvent) {
       <div :class="['modalHeader',title? 'modalHeader--bdb': '']">
         <h3 v-if="title" v-bind:id="titleId" v-bind:style="{ color: titleColor }">{{ title[0] }}</h3>
 
-        <button v-if="showCloseButton" class="closeBtn u-mlAuto" v-on:click="$emit('modal-closed')"><X :size="28" /></button>
+        <button v-if="showCloseButton" class="closeBtn u-mlAuto" v-on:click="$emit('modal-closed')" aria-label="閉じる"><X :size="28" /></button>
       </div>
       <div class="modalBody">
         <slot></slot>

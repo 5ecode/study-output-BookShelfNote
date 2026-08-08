@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import viteImagemin from 'vite-plugin-imagemin';
 import { fileURLToPath, URL } from 'node:url';
 import fs from 'fs';
 import path from 'path';
@@ -13,17 +12,6 @@ export default defineConfig({
   },
   plugins: [
     vue(),
-    viteImagemin({
-      gifsicle: { optimizationLevel: 7 },
-      optipng: { optimizationLevel: 7 },
-      mozjpeg: { quality: 75 },
-      svgo: {
-        plugins: [
-          { name: 'removeViewBox' },
-          { name: 'removeEmptyAttrs', active: false },
-        ],
-      },
-    }),
   ],
   css: {
     preprocessorOptions: {

@@ -29,3 +29,4 @@ dist-ssr
 /.env.local
 /.vscode
 /certs
+/proxy.php

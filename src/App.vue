@@ -68,7 +68,7 @@ function goList() {
     color: #fff;
     @include mq(lg) {
       display: grid;
-      grid-template-columns: 1fr 311px 1fr;
+      grid-template-columns: 1fr 340px 1fr;
     }
   }
 }

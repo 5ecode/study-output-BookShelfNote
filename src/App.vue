@@ -86,7 +86,7 @@ function goList() {
   bottom: 0;
   z-index: 1;
   width: 100%;
-  padding-top: 5px;
+  padding-block: 5px env(safe-area-inset-bottom);
   background: #fff;
   @include mq(lg) {
     position: static;
@@ -101,6 +101,7 @@ function goList() {
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex: 1;
     font-size: rem(12);
     font-weight: bold;
     color: $subColor;

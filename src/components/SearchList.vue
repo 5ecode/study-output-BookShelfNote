@@ -141,7 +141,7 @@ function resetSearch(){
     </div>
 
     <ul class="searchList u-mb1">
-      <li v-for="book in books" v-bind:id="book.isbn" v-bind:key="book.isbn" class="searchList_item" v-bind:class="isAlreadyAdded(book)? 'is-Registered': ''">
+      <li v-for="book in books" v-bind:id="book.isbn" v-bind:key="book.isbn" class="searchList_item" v-bind:class="isAlreadyAdded(book)? 'is-registered': ''">
         <label class="itemLabel">
           <span class="itemLabel_input"><input v-model="selectedIds" type="checkbox" v-bind:value="book.isbn" v-bind:disabled="isAlreadyAdded(book)"></span>
           <span class="itemLabel_cover"><span class="bookCover"><img v-if="book.imageUrl" v-bind:src="book.imageUrl" alt="書影"></span></span>
@@ -171,7 +171,7 @@ function resetSearch(){
   &_item{
     width: 100%;
     margin-bottom: 10px;
-    &.is-Registered{
+    &.is-registered{
       position: relative;
       &::before{
         display: block;

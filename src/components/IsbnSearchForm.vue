@@ -109,7 +109,7 @@ function emitAddScannedBooks(addBooks: BookData[]){
     </div>
 
     <div class="u-txtC u-mb2">
-      <p v-if="errors.search" class="u-txtC u-mb1 c-errorTxt">{{ errors.search }}</p>
+      <p v-if="errors.search" class="u-txtL-sp u-mb1 c-errorTxt">{{ errors.search }}</p>
       <button class="c-btn c-btn--primary" v-on:click="searchBook">検索</button>
     </div>
 

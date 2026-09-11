@@ -153,15 +153,15 @@ function emitAddBooks(books:BookData[]){
     <label>著者名で検索: <input v-model="author" type="text" name="searchAuthor" placeholder="著者名を入力" class="c-input"></label>
   </div>
 
-  <div class="u-txtC u-mb2">
-    <p v-if="errors.search" class="u-txtC u-mb1 c-errorTxt">{{ errors.search }}</p>
+  <div class="u-txtC">
+    <p v-if="errors.search" class="u-txtL-sp u-mb1 c-errorTxt">{{ errors.search }}</p>
     <button class="c-btn c-btn--primary" v-on:click="performSearch">検索</button>
   </div>
 
-  <p v-if="isLoading" class="u-txtC u-mb2">検索中...</p>
-  <p v-if="results && results.length === 0" class="u-txtC u-mb2">{{ notify }}</p>
+  <p v-if="isLoading" class="u-txtC u-mt2">検索中...</p>
+  <p v-if="results && results.length === 0" class="u-txtC u-mt2">{{ notify }}</p>
 
-  <div v-if="results && results.length > 0" class="u-mb2">
+  <div v-if="results && results.length > 0" class="searchResults">
     <SearchList v-bind:reg-books="regBooks" v-bind:books="results" v-on:books-added="emitAddBooks" v-on:search-reset="resetSearch">
       <template #more>
         <div v-if="hasMore" class="btnHolder">
@@ -196,8 +196,22 @@ function emitAddBooks(books:BookData[]){
   }
 }
 
+.searchResults {
+  @include mq(sm){
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100dvw;
+    height: 100dvh;
+  }
+}
+
 .btnHolder{
-  border-top: 1px dotted $baseColor;
+  margin-top: 10px;
+  border-top: 1px dotted $subColor;
   text-align: center;
 }
 

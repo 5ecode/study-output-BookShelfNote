@@ -135,12 +135,12 @@ function resetSearch(){
 </script>
 
 <template>
-  <div class="u-mb2">
+  <div class="resultsWrap">
     <div class="stickyHolder u-txtC">
       <label><input v-model="allSelected" type="checkbox">すべて選択</label>
     </div>
 
-    <ul class="searchList u-mb1">
+    <ul class="searchList">
       <li v-for="book in books" v-bind:id="book.isbn" v-bind:key="book.isbn" class="searchList_item" v-bind:class="isAlreadyAdded(book)? 'is-registered': ''">
         <label class="itemLabel">
           <span class="itemLabel_input"><input v-model="selectedIds" type="checkbox" v-bind:value="book.isbn" v-bind:disabled="isAlreadyAdded(book)"></span>
@@ -152,25 +152,39 @@ function resetSearch(){
     </ul>
 
     <slot name="more"></slot>
+  </div>
 
-    <div class="addControl">
-      <div class="addControl_btns u-txtC">
-        <button class="c-btn c-btn--secondary u-ml1" v-on:click="resetSearch">リセット</button>
-        <button class="c-btn c-btn--primary" v-on:click="addSelectedBooks">選択した書籍を追加</button>
-      </div>
+  <div class="addControl">
+    <div class="addControl_btns u-txtC">
+      <button class="c-btn c-btn--secondary u-ml1" v-on:click="resetSearch">リセット</button>
+      <button class="c-btn c-btn--primary" v-on:click="addSelectedBooks">選択した書籍を追加</button>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.resultsWrap {
+  margin-top: 20px;
+  @include mq(sm){
+    flex: 1;
+    overflow-y: auto;
+    width: 100dvw;
+    margin: 0;
+    padding: 10px 20px 60px;
+    background: #fff;
+  }
+}
 .searchList{
+  margin-top: 20px;
   @include mq(lg){
     max-width: 625px;
-    margin: auto;
+    margin-inline: auto;
   }
   &_item{
     width: 100%;
-    margin-bottom: 10px;
+    & + & {
+      margin-top: 10px;
+    }
     &.is-registered{
       position: relative;
       &::before{
@@ -277,22 +291,25 @@ function resetSearch(){
   bottom: 0;
   z-index: 10;
   width: 100%;
-  padding: 10px;
   border-top: 1px $subColor dotted;
   background: #fff;
+  @include mq(sm) {
+    // bottom: env(keyboard-inset-height, 0px);
+    // padding-bottom: env(safe-area-inset-bottom);
+  }
   &_btns{
     display: flex;
     justify-content: center;
     gap: 10px;
+    margin-block: 10px;
   }
 }
 
 .stickyHolder{
   position: sticky;
-  top: 40px;
+  top: -10px;
   z-index: 10;
   width: 100%;
-  margin-bottom: 20px;
   padding-block: 8px;
   background: #fff;
 }

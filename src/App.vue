@@ -46,16 +46,15 @@ function goList() {
       <button v-if="!isListPage" v-on:click="goList" class="icoBtn"><LibraryBig :size="28" :stroke-width="1.75" /></button>
     </div>
   </header>
-
-  <router-view />
+  <main class="l-main">
+    <div class="l-base">
+      <router-view />
+    </div>
+  </main>
 </template>
 
 <style lang="scss" scoped>
 .header {
-  position: fixed;
-  right: 0;
-  top: 0;
-  z-index: 10;
   width: 100%;
   padding-block: 4px;
   background: $subColor;
@@ -86,8 +85,11 @@ function goList() {
   bottom: 0;
   z-index: 1;
   width: 100%;
-  padding-block: 5px env(safe-area-inset-bottom);
+  padding-top: 5px;
   background: #fff;
+  @include mq(sm) {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
   @include mq(lg) {
     position: static;
     justify-content: space-between;

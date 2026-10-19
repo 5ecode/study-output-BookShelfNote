@@ -52,6 +52,12 @@ function handleAddSelectedBooks(bookList: BookData[]) {
   <SearchBookForm v-if="selected === 'search'" v-bind:reg-books="bookStore.books" v-on:books-added="handleAddSelectedBooks" />
   <IsbnSearchForm v-else-if="selected === 'isbn'" v-bind:reg-books="bookStore.books" v-on:book-added="handleAddBook" v-on:scanned-books-added="handleAddSelectedBooks" />
   <AddBookForm v-else v-bind:reg-books="bookStore.books" v-on:book-added="handleAddBook" />
+
+  <div v-if="selected !== 'manual'" class="supportedBlock">
+    <!-- Rakuten Web Services Attribution Snippet FROM HERE -->
+    <a href="https://developers.rakuten.com/" target="_blank">Supported by Rakuten Developers</a>
+    <!-- Rakuten Web Services Attribution Snippet TO HERE -->
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -82,6 +88,13 @@ function handleAddSelectedBooks(bookList: BookData[]) {
   }
   &:focus-visible{
     outline-color: $mainColor;
+  }
+}
+.supportedBlock {
+  text-align: center;
+  font-size: rem(14);
+  a:hover {
+    text-decoration: underline;
   }
 }
 </style>

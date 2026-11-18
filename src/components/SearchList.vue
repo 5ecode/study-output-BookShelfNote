@@ -1,6 +1,7 @@
 <!-- src/components/SearchList.vue -->
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { UNKNOWN_AUTHOR } from '../constants/book';
 import type { BookData, CombinedBookData } from '../types';
 
 /* props
@@ -146,7 +147,7 @@ function resetSearch(){
           <span class="itemLabel_input"><input v-model="selectedIds" type="checkbox" v-bind:value="book.isbn" v-bind:disabled="isAlreadyAdded(book)"></span>
           <span class="itemLabel_cover"><span class="bookCover"><img v-if="book.imageUrl" v-bind:src="book.imageUrl" alt="書影"></span></span>
           <span class="itemLabel_title"><b>{{ book.title }}</b></span>
-          <span class="itemLabel_authors">{{ book.author ? adjustAuthors(book.author) : '著者不明' }}</span>
+          <span class="itemLabel_authors">{{ book.author ? adjustAuthors(book.author) : UNKNOWN_AUTHOR }}</span>
         </label>
       </li>
     </ul>

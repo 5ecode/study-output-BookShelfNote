@@ -72,7 +72,7 @@ export const useBookStore = defineStore('book', () => {
   // シリーズ名を一括更新
   function updateSeriesName(oldSeries: string, newSeries: string) {
     books.value.forEach(book => {
-      if (book.seriesName === oldSeries) {
+      if (book.seriesName === oldSeries || book.seriesName === '') {
         book.seriesName = newSeries;
       }
     });
@@ -82,6 +82,17 @@ export const useBookStore = defineStore('book', () => {
   // 著者名を一括更新
   function updateAuthor(oldAuthor: string, newAuthor: string) {
     books.value = books.value.map(book => {
+      // 著者不明の場合は新しい著作名を追加
+      if (book.authors.length === 0) {
+        return { ...book, authors: [newAuthor] };
+      }
+
+      // 著作名が空文字の場合は削除
+      if (newAuthor.trim() === '') {
+        const targetAuthor = book.authors.filter((author) => author !== oldAuthor);
+        return { ...book, authors: targetAuthor };
+      }
+
       const targetAuthor = book.authors.map(author => {
         if (author === oldAuthor) {
           return newAuthor;

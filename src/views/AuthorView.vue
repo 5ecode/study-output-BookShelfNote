@@ -7,6 +7,7 @@ import { useUiStore } from '../stores/uiStore';
 import { normalizeDate } from '../utils/normalizeDate';
 import GroupList from '../components/GroupList.vue';
 import type { ListMode } from '../types';
+import { UNKNOWN_AUTHOR } from '../constants/book';
 
 /* props
 ---------------------------------- */
@@ -29,7 +30,13 @@ const sort = ref<'new' | 'old'>('new');
 // 並び順
 const filteredBooks = computed(() =>
   bookStore.books
-    .filter(book => book.authors.includes(props.author))
+    .filter(book => {
+      if (props.author === UNKNOWN_AUTHOR) {
+        return book.authors.length === 0;
+      } else {
+        return book.authors.includes(props.author);
+      }
+    })
     .sort((a, b) => {
       const dateA = normalizeDate(a.date || '');
       const dateB = normalizeDate(b.date || '');
@@ -49,13 +56,22 @@ onMounted(() => {
 ---------------------------------- */
 // 著者名一括編集
 function handleSaveAuthor(editAuthor: string) {
-  if (editAuthor.trim() === '') return;
-
   const newAuthor = editAuthor.trim();
+
+  if (newAuthor === '') {
+    const userConfirm = confirm(`著者名から「${props.author}」を削除します。よろしいですか？`);
+    if (!userConfirm) return;
+  }
+
+  // 著者名を更新
   bookStore.updateAuthor(props.author, newAuthor);
 
   // パラメータを編集したものに差し替え
-  router.push({ name: 'Author', params: { author: newAuthor } });
+  if (newAuthor !== '') {
+    router.push({ name: 'Author', params: { author: newAuthor } });
+  } else {
+    router.push({ name: 'Author', params: { author: UNKNOWN_AUTHOR } });
+  }
 
   // 編集モード解除
   uiStore.listMode = 'view';

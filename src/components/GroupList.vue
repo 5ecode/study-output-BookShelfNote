@@ -1,10 +1,11 @@
 <!-- src/components/GroupList.vue -->
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { BookCheck } from 'lucide-vue-next';
 import { useModal } from '../composables/useModal';
 import BookItem from '../components/BookItem.vue';
 import BookDetailModal from '../components/BookDetailModal.vue';
+import { UNKNOWN_AUTHOR, UNREGISTERED_SERIES } from '../constants/book';
 import type { ListMode, BookWithId } from '../types';
 
 /* props
@@ -28,6 +29,13 @@ const emit = defineEmits<{
 /* reactivity
 ---------------------------------- */
 const editTitle = ref(props.groupTitle);
+
+/* computed
+---------------------------------- */
+// 新刊チェックボタンの表示/非表示
+const showNewBookCheckBtn = computed(() => {
+  return (props.groupTitle !== UNKNOWN_AUTHOR && props.groupTitle !== UNREGISTERED_SERIES);
+});
 
 /* watch
 ---------------------------------- */
@@ -76,7 +84,7 @@ function cancelEditing() {
       <label><input type="radio" v-bind:checked="modelValue === 'new'" value="new" v-on:change="$emit('update:modelValue', 'new')">新しい順</label>
       <label><input type="radio" v-bind:checked="modelValue === 'old'" value="'old'" v-on:change="$emit('update:modelValue', 'old')">古い順</label>
     </div>
-    <button class="icoBtn" v-on:click="$emit('new-book-checked')"><BookCheck />新刊CHECK</button>
+    <button v-if="showNewBookCheckBtn" class="icoBtn" v-on:click="$emit('new-book-checked')"><BookCheck />新刊CHECK</button>
   </div>
 
   <BookItem v-bind:books="books" v-bind:list-mode="listMode" v-on:detail-opened="openDetailModal" v-on:edit-opened="openEditModal" v-on:confirm-delete-opened="openDeleteModal" />

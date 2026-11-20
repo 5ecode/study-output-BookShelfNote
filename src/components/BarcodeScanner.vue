@@ -54,7 +54,7 @@ watch(() => props.method, (newVal) => {
 
 // ISBN取得したら検索開始
 watch(() => isbn.value, () => {
-  if(!isSearching.value){
+  if (!isSearching.value) {
     searchBook();
   }
 });
@@ -125,11 +125,11 @@ function stopScanner() {
 
   const v = video.value;
   const stream = (v?.srcObject as MediaStream) ?? null;
-  stream?.getTracks().forEach(t => t.stop());
+  stream?.getTracks().forEach((t) => t.stop());
 
   if (v) {
     v.srcObject = null;
-    try { v.pause(); } catch {/*何もしない*/}
+    try { v.pause(); } catch {/*何もしない*/ }
   }
 
   reader = null;
@@ -144,7 +144,7 @@ async function searchBook() {
 
   try {
     const book = await fetchBookByIsbn(isbn.value);
-    if(book) {
+    if (book) {
       results.value.unshift(book);
     } else {
       notify.value = '該当する書籍が見つかりませんでした。';
@@ -160,14 +160,13 @@ async function searchBook() {
 
 // 重複登録チェック
 function isAlreadyAdded(isbn: string) {
-  if(props.regBooks)
-    return props.regBooks.some(book =>
-      book.isbn === isbn,
-    );
+  if (props.regBooks) {
+    return props.regBooks.some((book) => book.isbn === isbn);
+  }
 }
 
 // バーコードで読み取った書籍を追加
-function emitAddScannedBooks(addBooks: BookData[]){
+function emitAddScannedBooks(addBooks: BookData[]) {
   emit('scanned-books-added', addBooks);
   errors.search = '';
   scannedIsbns.value = [];
@@ -175,22 +174,22 @@ function emitAddScannedBooks(addBooks: BookData[]){
 </script>
 
 <template>
-  <div class="frame">
-    <video ref="video" class="scanner" muted playsinline />
-  </div>
-  <p v-if="results && results.length === 0" class="u-txtC">{{ notify }}</p>
+<div class="frame">
+  <video ref="video" class="scanner" muted playsinline />
+</div>
+<p v-if="results && results.length === 0" class="u-txtC">{{ notify }}</p>
 
-  <div v-if="results && results.length > 0" class="u-mb2">
-    <SearchList v-bind:reg-books="regBooks" v-bind:books="results" v-on:books-added="emitAddScannedBooks" />
-  </div>
+<div v-if="results && results.length > 0" class="u-mb2">
+  <SearchList v-bind:reg-books="regBooks" v-bind:books="results" v-on:books-added="emitAddScannedBooks" />
+</div>
 </template>
 
 <style lang="scss" scoped>
-.frame{
+.frame {
   max-width: 100%;
 }
 
-.scanner{
+.scanner {
   width: 100%;
   height: 150px;
   object-fit: cover;
@@ -198,4 +197,3 @@ function emitAddScannedBooks(addBooks: BookData[]){
   border-radius: 6px;
 }
 </style>
-

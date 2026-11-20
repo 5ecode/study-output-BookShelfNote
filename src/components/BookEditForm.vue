@@ -3,7 +3,7 @@
 import { onMounted, ref, reactive, watch } from 'vue';
 import { useBookStore } from '../stores/bookStore';
 import { useBookCover } from '../composables/useBookCover';
-import BaseForm from './BaseForm.vue';
+import BaseForm from '../components/BaseForm.vue';
 import type { LentStatus, BookWithId } from '../types';
 
 /* props
@@ -74,13 +74,11 @@ const {
 } = useBookCover(bookStore.books, form.id);
 
 // 書籍情報更新
-function emitBookUpdated(upDateBook: BookWithId){
+function emitBookUpdated(upDateBook: BookWithId) {
   emit('book-updated', upDateBook);
 }
 </script>
 
 <template>
-  <BaseForm ref="baseForm" v-bind:reg-books="bookStore.books" v-bind:book="book" v-bind:show-cover-actions="true" v-bind:book-cover="bookCoverUrl" v-bind:errors="errors" v-on:submitted="emitBookUpdated" v-on:cover-searched="searchBookCover" v-on:cover-removed="removeCover" />
+<BaseForm ref="baseForm" v-bind:reg-books="bookStore.books" v-bind:book="book" v-bind:show-cover-actions="true" v-bind:book-cover="bookCoverUrl" v-bind:errors="errors" v-on:submitted="emitBookUpdated" v-on:cover-searched="searchBookCover" v-on:cover-removed="removeCover" />
 </template>
-
-

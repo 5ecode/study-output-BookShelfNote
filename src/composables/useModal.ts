@@ -12,7 +12,7 @@ export function useModal() {
   const modalMode = ref<'detail' | 'edit' | 'confirm-delete'>('detail');
 
   // 詳細モーダル開く
-  function openDetailModal(book: BookWithId, e: Event){
+  function openDetailModal(book: BookWithId, e: Event) {
     detailTargetBook.value = book;
     modalMode.value = 'detail';
     showDetailModal.value = true;
@@ -30,7 +30,7 @@ export function useModal() {
   }
 
   // モーダル閉じる
-  async function closeModal(){
+  async function closeModal() {
     detailTargetBook.value = null;
     modalMode.value = 'detail';
     showDetailModal.value = false;
@@ -56,6 +56,7 @@ export function useModal() {
     if (detailTargetBook.value) {
       bookStore.deleteBook(detailTargetBook.value.id);
     }
+
     closeModal();
   }
 

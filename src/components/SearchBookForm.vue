@@ -1,6 +1,6 @@
 <!-- src/components/SearchBookForm.vue -->
 <script setup lang="ts">
-import { ref, reactive, computed,onMounted } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { useUiStore } from '../stores/uiStore';
 import { fetchRakutenRaw } from '../composables/useRakutenApi';
 import SearchList from '../components/SearchList.vue';
@@ -8,12 +8,12 @@ import type { BookData, CombinedBookData } from '../types';
 
 /* props
 ---------------------------------- */
-defineProps<{
+const props = defineProps<{
   regBooks: {
-    title: string;
-    authors: string[];
-    date: string | null;
-    isbn: string | null;
+    title: string
+    authors: string[]
+    date: string | null
+    isbn: string | null
   }[]
 }>();
 
@@ -65,6 +65,7 @@ onMounted(() => {
     performSearch();
     uiStore.clearSearchSeries();
   }
+
   if (uiStore.searchAuthor) {
     performSearch();
     uiStore.clearSearchAuthor();
@@ -89,6 +90,7 @@ async function getBooks() {
     if (title.value.trim() !== '') {
       query.title = title.value;
     }
+
     if (author.value.trim() !== '') {
       query.author = author.value;
     }
@@ -110,7 +112,7 @@ async function getBooks() {
 }
 
 // 検索ボタンを押下したとき
-function performSearch(){
+function performSearch() {
   if (!title.value.trim() && !author.value.trim()) {
     errors.search = '書籍名、著者名のいずれか、または両方に入力してください';
     return;
@@ -127,7 +129,7 @@ function fetchBooks() {
 }
 
 // 検索結果リセット
-function resetSearch(){
+function resetSearch() {
   results.value = [];
   currentPage.value = 1;
   errors.search = '';
@@ -135,62 +137,64 @@ function resetSearch(){
 }
 
 // 書籍を追加
-function emitAddBooks(books:BookData[]){
+function emitAddBooks(books: BookData[]) {
   emit('books-added', books);
   selectedIds.value = [];
 }
 </script>
 
 <template>
-  <div class="sizeFilter u-txtC">
-    <template v-for="item in BOOK_SIZES" v-bind:key="item.value">
-      <label><input v-model="bookSize" type="radio" v-bind:value="item.value">{{ item.label }}</label>
+<div class="sizeFilter u-txtC">
+  <template v-for="item in BOOK_SIZES" v-bind:key="item.value">
+    <label><input v-model="bookSize" type="radio" v-bind:value="item.value">{{ item.label }}</label>
+  </template>
+</div>
+
+<div class="formUnit u-mb1">
+  <label>書籍名で検索: <input v-model="title" type="text" name="searchTitle" placeholder="書籍名を入力" class="c-input"></label>
+  <label>著者名で検索: <input v-model="author" type="text" name="searchAuthor" placeholder="著者名を入力" class="c-input"></label>
+</div>
+
+<div class="u-mb2 u-txtC">
+  <p v-if="errors.search" class="u-txtL-sp u-mb1 c-errorTxt">{{ errors.search }}</p>
+  <button class="c-btn c-btn--primary" v-on:click="performSearch">検索</button>
+</div>
+
+<p v-if="isLoading" class="u-txtC u-mb2">検索中...</p>
+<p v-if="notify !== ''" class="u-txtC u-mb2">{{ notify }}</p>
+
+<div v-if="results && results.length > 0" class="searchResults">
+  <SearchList v-bind:reg-books="regBooks" v-bind:books="results" v-on:books-added="emitAddBooks" v-on:search-reset="resetSearch">
+    <template #more>
+      <div v-if="hasMore" class="btnHolder">
+        <button class="moreBtn" v-on:click="fetchBooks">Show more</button>
+      </div>
     </template>
-  </div>
-
-  <div class="formUnit u-mb1">
-    <label>書籍名で検索: <input v-model="title" type="text" name="searchTitle" placeholder="書籍名を入力" class="c-input"></label>
-    <label>著者名で検索: <input v-model="author" type="text" name="searchAuthor" placeholder="著者名を入力" class="c-input"></label>
-  </div>
-
-  <div class="u-mb2 u-txtC">
-    <p v-if="errors.search" class="u-txtL-sp u-mb1 c-errorTxt">{{ errors.search }}</p>
-    <button class="c-btn c-btn--primary" v-on:click="performSearch">検索</button>
-  </div>
-
-  <p v-if="isLoading" class="u-txtC u-mb2">検索中...</p>
-  <p v-if="notify !== ''" class="u-txtC u-mb2">{{ notify }}</p>
-
-  <div v-if="results && results.length > 0" class="searchResults">
-    <SearchList v-bind:reg-books="regBooks" v-bind:books="results" v-on:books-added="emitAddBooks" v-on:search-reset="resetSearch">
-      <template #more>
-        <div v-if="hasMore" class="btnHolder">
-          <button class="moreBtn" v-on:click="fetchBooks">Show more</button>
-        </div>
-      </template>
-    </SearchList>
-  </div>
+  </SearchList>
+</div>
 </template>
 
 <style lang="scss" scoped>
-.sizeFilter{
+.sizeFilter {
   display: flex;
   flex-wrap: wrap;
-  justify-content:space-between;
+  justify-content: space-between;
   max-width: 400px;
   margin: 0 auto 20px;
 }
 
-.formUnit{
+.formUnit {
   display: flex;
   flex-direction: column;
   gap: .6em;
   max-width: 600px;
   margin-inline: auto;
-  label{
+
+  label {
     line-height: 1.6;
   }
-  input[type="text"]{
+
+  input[type="text"] {
     display: block;
     width: 100%;
   }
@@ -198,7 +202,8 @@ function emitAddBooks(books:BookData[]){
 
 .searchResults {
   margin-bottom: 30px;
-  @include mq(sm){
+
+  @include mq(sm) {
     display: flex;
     flex-direction: column;
     z-index: 9999;
@@ -210,20 +215,22 @@ function emitAddBooks(books:BookData[]){
   }
 }
 
-.btnHolder{
+.btnHolder {
   margin-top: 10px;
   border-top: 1px dotted $subColor;
   text-align: center;
 }
 
-.moreBtn{
+.moreBtn {
   padding-block: 10px;
   width: 100%;
   font-weight: bold;
   color: $baseColor;
-  @include mq(lg){
+
+  @include mq(lg) {
     width: auto;
-    @include hover{
+
+    @include hover {
       color: $successColor;
     }
   }

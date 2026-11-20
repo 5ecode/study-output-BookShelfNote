@@ -1,5 +1,6 @@
 @charset "utf-8";
 @use "@/styles/setting" as *;
+
 /*--------------------------------------------------------------------
   @Component : リスト
 ----------------------------------------------------------------------*/
@@ -8,42 +9,49 @@
     padding-left: 1.5em;
   }
 }
-.c-{
+
+.c- {
   &list {
-    > * {
+    >* {
       margin-bottom: 5px;
     }
   }
+
   &dotList {
     @extend %listCommonPl;
-    > * {
+
+    >* {
       text-indent: -1em;
+
       &::before {
         display: inline-block;
         transform: translateX(.64em);
         width: 1em;
         height: 1em;
-        content: '・'
+        content: "・";
       }
     }
   }
+
   &discList {
     @extend %listCommonPl;
     list-style-type: disc;
   }
+
   &decimalList {
     @extend %listCommonPl;
-    counter-reset:li;
+    counter-reset: li;
     list-style-type: decimal;
   }
+
   &alphaList {
     @extend %listCommonPl;
     list-style-type: lower-alpha;
   }
+
   &definitionList {
-    > dt {
+    >dt {
       margin-top: 1em;
     }
   }
 }
-

@@ -2,12 +2,12 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { UNKNOWN_AUTHOR } from '../constants/book';
 import { useBookStore } from '../stores/bookStore';
 import { useUiStore } from '../stores/uiStore';
 import { normalizeDate } from '../utils/normalizeDate';
 import GroupList from '../components/GroupList.vue';
 import type { ListMode } from '../types';
-import { UNKNOWN_AUTHOR } from '../constants/book';
 
 /* props
 ---------------------------------- */
@@ -30,7 +30,7 @@ const sort = ref<'new' | 'old'>('new');
 // 並び順
 const filteredBooks = computed(() =>
   bookStore.books
-    .filter(book => {
+    .filter((book) => {
       if (props.author === UNKNOWN_AUTHOR) {
         return book.authors.length === 0;
       } else {
@@ -91,5 +91,5 @@ function handleGoToSearch() {
 </script>
 
 <template>
-  <GroupList v-model="sort" v-bind:group-title="author" v-bind:books="filteredBooks" v-bind:list-mode="uiStore.listMode" v-on:title-saved="handleSaveAuthor" v-on:new-book-checked="handleGoToSearch" v-on:list-mode-chenged="handleCancel" />
+<GroupList v-model="sort" v-bind:group-title="author" v-bind:books="filteredBooks" v-bind:list-mode="uiStore.listMode" v-on:title-saved="handleSaveAuthor" v-on:new-book-checked="handleGoToSearch" v-on:list-mode-chenged="handleCancel" />
 </template>

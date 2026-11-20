@@ -19,6 +19,7 @@ export const useUiStore = defineStore('ui', () => {
   function clearSearchSeries() {
     searchSeries.value = null;
   }
+
   function setSearchAuthor(author: string) {
     searchAuthor.value = author;
   }

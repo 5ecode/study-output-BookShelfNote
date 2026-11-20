@@ -11,7 +11,7 @@ export const useBookStore = defineStore('book', () => {
   // リストID
   const nextId = computed((): number => {
     if (books.value.length === 0) return 1;
-    return Math.max(...books.value.map(book => book.id)) + 1;
+    return Math.max(...books.value.map((book) => book.id)) + 1;
   });
 
   // 書籍を追加
@@ -20,6 +20,7 @@ export const useBookStore = defineStore('book', () => {
       ...book,
       id: nextId.value,
     };
+
     books.value.unshift(newBook);
     saveToStorage();
   }
@@ -38,6 +39,7 @@ export const useBookStore = defineStore('book', () => {
         seriesName: book.seriesName,
       });
     }
+
     saveToStorage();
   }
 
@@ -56,7 +58,7 @@ export const useBookStore = defineStore('book', () => {
 
   // 書籍データ更新
   function updateBook(updatedBook: BookWithId) {
-    const index = books.value.findIndex(book => book.id === updatedBook.id);
+    const index = books.value.findIndex((book) => book.id === updatedBook.id);
     if (index !== -1) {
       books.value[index] = { ...books.value[index], ...updatedBook };
       saveToStorage();
@@ -65,23 +67,24 @@ export const useBookStore = defineStore('book', () => {
 
   // 書籍データ削除
   function deleteBook(id: number) {
-    books.value = books.value.filter(book => book.id !== id);
+    books.value = books.value.filter((book) => book.id !== id);
     saveToStorage();
   }
 
   // シリーズ名を一括更新
   function updateSeriesName(oldSeries: string, newSeries: string) {
-    books.value.forEach(book => {
+    books.value.forEach((book) => {
       if (book.seriesName === oldSeries || book.seriesName === '') {
         book.seriesName = newSeries;
       }
     });
+
     saveToStorage();
   }
 
   // 著者名を一括更新
   function updateAuthor(oldAuthor: string, newAuthor: string) {
-    books.value = books.value.map(book => {
+    books.value = books.value.map((book) => {
       // 著者不明の場合は新しい著作名を追加
       if (book.authors.length === 0) {
         return { ...book, authors: [newAuthor] };
@@ -93,14 +96,17 @@ export const useBookStore = defineStore('book', () => {
         return { ...book, authors: targetAuthor };
       }
 
-      const targetAuthor = book.authors.map(author => {
+      const targetAuthor = book.authors.map((author) => {
         if (author === oldAuthor) {
           return newAuthor;
         }
+
         return author;
       });
+
       return { ...book, authors: targetAuthor };
     });
+
     saveToStorage();
   }
 

@@ -14,7 +14,7 @@ export interface BookData {
   image: string | null;
   lentStatus: LentStatus;
   isbn: string | null;
-  seriesName: string | null
+  seriesName: string | null;
 }
 
 // IDあり：編集や削除で使う

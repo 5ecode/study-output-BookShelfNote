@@ -46,6 +46,18 @@ watch(() => props.groupTitle, (newVal) => {
 
 /* function
 ---------------------------------- */
+// 変更を保存
+function emitEditing(newTitle: string) {
+  emit('title-saved', newTitle);
+  editTitle.value = props.groupTitle;
+}
+
+// 編集キャンセル
+function cancelEditing() {
+  emit('list-mode-chenged', 'view');
+  editTitle.value = props.groupTitle;
+}
+
 // モーダル用ロジック
 const {
   showDetailModal,
@@ -60,12 +72,6 @@ const {
   openEditModal,
   openDeleteModal,
 } = useModal();
-
-// 編集キャンセル
-function cancelEditing() {
-  editTitle.value = props.groupTitle;
-  emit('list-mode-chenged', 'view');
-}
 </script>
 
 <template>
@@ -75,7 +81,7 @@ function cancelEditing() {
     <input v-model="editTitle" class="c-input" />
     <div class="editHolder_control u-txtR">
       <button class="c-btn c-btn--secondary" v-on:click="cancelEditing">キャンセル</button>
-      <button class="c-btn c-btn--primary" v-on:click="$emit('title-saved', editTitle)">保存</button>
+      <button class="c-btn c-btn--primary" v-on:click="emitEditing(editTitle)">保存</button>
     </div>
   </div>
 </div>

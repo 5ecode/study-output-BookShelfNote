@@ -58,7 +58,7 @@ onMounted(() => {
 function handleSaveAuthor(editAuthor: string) {
   const newAuthor = editAuthor.trim();
 
-  if (newAuthor === '') {
+  if (newAuthor === '' && props.author !== UNKNOWN_AUTHOR) {
     const userConfirm = confirm(`著者名から「${props.author}」を削除します。よろしいですか？`);
     if (!userConfirm) return;
   }

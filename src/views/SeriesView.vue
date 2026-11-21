@@ -52,7 +52,7 @@ onMounted(() => {
 function handleSaveSeries(editSeries: string) {
   const newSeries = editSeries.trim();
 
-  if (newSeries === '') {
+  if (newSeries === '' && props.series !== UNREGISTERED_SERIES) {
     const userConfirm = confirm('書籍情報からシリーズ名を削除します。\nよろしいですか？');
     if (!userConfirm) return;
   }

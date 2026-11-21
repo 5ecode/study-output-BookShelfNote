@@ -86,12 +86,12 @@ export const useBookStore = defineStore('book', () => {
   function updateAuthor(oldAuthor: string, newAuthor: string) {
     books.value = books.value.map((book) => {
       // 著者不明の場合は新しい著作名を追加
-      if (book.authors.length === 0) {
+      if (book.authors.length === 0 && newAuthor !== '') {
         return { ...book, authors: [newAuthor] };
       }
 
       // 著作名が空文字の場合は削除
-      if (newAuthor.trim() === '') {
+      if (newAuthor === '') {
         const targetAuthor = book.authors.filter((author) => author !== oldAuthor);
         return { ...book, authors: targetAuthor };
       }

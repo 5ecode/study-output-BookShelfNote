@@ -8,7 +8,7 @@ import type { BookData, CombinedBookData } from '../types';
 
 /* props
 ---------------------------------- */
-const props = defineProps<{
+defineProps<{
   regBooks: {
     title: string
     authors: string[]

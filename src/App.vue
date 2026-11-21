@@ -95,7 +95,7 @@ function goList() {
   position: fixed;
   left: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: 10;
   width: 100%;
   padding-top: 5px;
   background: #fff;

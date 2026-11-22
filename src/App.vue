@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useUiStore } from './stores/uiStore';
 import { BookPlus, Library, LibraryBig, SquarePen, Trash2 } from 'lucide-vue-next';
+import { useUiStore } from './stores/uiStore';
 
 /* constant
 ---------------------------------- */
@@ -32,25 +32,35 @@ function goList() {
 </script>
 
 <template>
-  <header class="header">
-    <div class="header_inner">
-      <h1 class="title">BookShelfNote</h1>
+<header class="header">
+  <div class="header_inner">
+    <h1 class="title">BookShelfNote</h1>
 
-      <div v-bind:class="[isAddPage ? 'is-hidden' : '']" class="navi">
-        <button v-bind:class="{ 'is-active': uiStore.listMode === 'view' }" v-bind:aria-pressed="uiStore.listMode === 'view'" v-on:click="uiStore.setListMode('view')" class="navi_btn"><Library :size="28" />通常表示</button>
-        <button v-bind:class="{ 'is-active': uiStore.listMode === 'edit' }" v-bind:aria-pressed="uiStore.listMode === 'edit'" v-on:click="uiStore.setListMode('edit')" class="navi_btn"><SquarePen :size="28" />編集モード</button>
-        <button v-bind:class="{ 'is-active': uiStore.listMode === 'delete' }" v-bind:aria-pressed="uiStore.listMode === 'delete'" v-on:click="uiStore.setListMode('delete')" class="navi_btn"><Trash2 :size="28" />削除モード</button>
-      </div>
+    <div v-bind:class="[isAddPage ? 'is-hidden' : '']" class="navi">
+      <button v-bind:class="{ 'is-active': uiStore.listMode === 'view' }" v-bind:aria-pressed="uiStore.listMode === 'view'" v-on:click="uiStore.setListMode('view')" class="navi_btn">
+        <Library :size="28" />通常表示
+      </button>
+      <button v-bind:class="{ 'is-active': uiStore.listMode === 'edit' }" v-bind:aria-pressed="uiStore.listMode === 'edit'" v-on:click="uiStore.setListMode('edit')" class="navi_btn">
+        <SquarePen :size="28" />編集モード
+      </button>
+      <button v-bind:class="{ 'is-active': uiStore.listMode === 'delete' }" v-bind:aria-pressed="uiStore.listMode === 'delete'" v-on:click="uiStore.setListMode('delete')" class="navi_btn">
+        <Trash2 :size="28" />削除モード
+      </button>
+    </div>
 
-      <button v-if="isListPage" v-on:click="goAdd" class="icoBtn"><BookPlus :size="28" :stroke-width="1.75" /></button>
-      <button v-if="!isListPage" v-on:click="goList" class="icoBtn"><LibraryBig :size="28" :stroke-width="1.75" /></button>
-    </div>
-  </header>
-  <main class="l-main">
-    <div class="l-base">
-      <router-view />
-    </div>
-  </main>
+    <button v-if="isListPage" v-on:click="goAdd" class="icoBtn">
+      <BookPlus :size="28" :stroke-width="1.75" />
+    </button>
+    <button v-if="!isListPage" v-on:click="goList" class="icoBtn">
+      <LibraryBig :size="28" :stroke-width="1.75" />
+    </button>
+  </div>
+</header>
+<main class="l-main">
+  <div class="l-base">
+    <router-view />
+  </div>
+</main>
 </template>
 
 <style lang="scss" scoped>
@@ -58,6 +68,7 @@ function goList() {
   width: 100%;
   padding-block: 4px;
   background: $subColor;
+
   &_inner {
     display: flex;
     align-items: center;
@@ -65,6 +76,7 @@ function goList() {
     max-width: 1100px;
     margin: auto;
     color: #fff;
+
     @include mq(lg) {
       display: grid;
       grid-template-columns: 1fr 340px 1fr;
@@ -83,22 +95,26 @@ function goList() {
   position: fixed;
   left: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: 10;
   width: 100%;
   padding-top: 5px;
   background: #fff;
+
   @include mq(sm) {
     padding-bottom: env(safe-area-inset-bottom);
   }
+
   @include mq(lg) {
     position: static;
     justify-content: space-between;
     border-radius: 5px;
     padding: 2px 1px;
   }
+
   &.is-hidden {
     visibility: hidden;
   }
+
   &_btn {
     display: flex;
     flex-direction: column;
@@ -108,10 +124,12 @@ function goList() {
     font-weight: bold;
     color: $subColor;
     transition: color .3s, background-color .3s;
+
     &.is-active,
     &:hover {
       position: relative;
-      &::before{
+
+      &::before {
         position: absolute;
         content: "";
         width: 34px;
@@ -121,31 +139,38 @@ function goList() {
         background: $subColor;
         z-index: -1;
       }
+
       svg {
         color: #fff;
       }
     }
+
     @include mq(lg) {
       flex-direction: row;
       gap: 5px;
       border: solid $subColor;
       border-width: 0 1px;
+
       &:first-of-type {
         border-radius: 5px 0 0 5px;
         border-left-color: #fff;
       }
+
       &:nth-of-type(2) {
         border-color: $subColor;
       }
+
       &:last-of-type {
         border-radius: 0 5px 5px 0;
         border-right-color: #fff;
       }
+
       &.is-active,
-      &:hover{
+      &:hover {
         background: $subColor;
         color: #fff;
-        &::before{
+
+        &::before {
           display: none;
         }
       }

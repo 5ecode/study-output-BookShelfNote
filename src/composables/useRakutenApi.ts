@@ -25,7 +25,7 @@ export async function fetchRakutenRaw(params: Record<string, string>): Promise<{
   });
 
   const res = await fetch(`${BASE_URL}?${searchParams.toString()}`);
-  const data:RakutenApiResponse = await res.json();
+  const data: RakutenApiResponse = await res.json();
 
   const searchBooks: RakutenBook[] = data.Items.map((entry) => {
     const item = entry.Item;
@@ -39,7 +39,7 @@ export async function fetchRakutenRaw(params: Record<string, string>): Promise<{
     };
   });
 
-  const books = searchBooks.map(function(book){
+  const books = searchBooks.map((book) => {
     return { ...book, seriesName: addSeriesName(book.title) };
   });
   return { books, totalCount: data.count };

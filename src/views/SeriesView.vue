@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { UNREGISTERED_SERIES } from '../constants/book';
 import { useBookStore } from '../stores/bookStore';
 import { useUiStore } from '../stores/uiStore';
 import { normalizeDate } from '../utils/normalizeDate';
@@ -29,7 +30,7 @@ const sort = ref<'new' | 'old'>('new');
 // 並び順
 const filteredBooks = computed(() =>
   bookStore.books
-    .filter(book => book.seriesName === props.series)
+    .filter((book) => book.seriesName === (props.series === UNREGISTERED_SERIES ? '' : props.series))
     .sort((a, b) => {
       const dateA = normalizeDate(a.date || '');
       const dateB = normalizeDate(b.date || '');
@@ -49,13 +50,22 @@ onMounted(() => {
 ---------------------------------- */
 // シリーズ名一括編集
 function handleSaveSeries(editSeries: string) {
-  if (editSeries.trim() === '') return;
-
   const newSeries = editSeries.trim();
+
+  if (newSeries === '' && props.series !== UNREGISTERED_SERIES) {
+    const userConfirm = confirm('書籍情報からシリーズ名を削除します。\nよろしいですか？');
+    if (!userConfirm) return;
+  }
+
+  // シリーズ名更新
   bookStore.updateSeriesName(props.series, newSeries);
 
   // パラメータを編集したものに差し替え
-  router.push({ name: 'Series', params: { series: newSeries } });
+  if (newSeries !== '') {
+    router.push({ name: 'Series', params: { series: newSeries } });
+  } else {
+    router.push({ name: 'Series', params: { series: UNREGISTERED_SERIES } });
+  }
 
   // 編集モード解除
   uiStore.listMode = 'view';
@@ -75,5 +85,5 @@ function handleGoToSearch() {
 </script>
 
 <template>
-  <GroupList v-model="sort" v-bind:group-title="series" v-bind:books="filteredBooks" v-bind:list-mode="uiStore.listMode" v-on:title-saved="handleSaveSeries" v-on:new-book-checked="handleGoToSearch" v-on:list-mode-chenged="handleCancel"></GroupList>
+<GroupList v-model="sort" v-bind:group-title="series" v-bind:books="filteredBooks" v-bind:list-mode="uiStore.listMode" v-on:title-saved="handleSaveSeries" v-on:new-book-checked="handleGoToSearch" v-on:list-mode-chenged="handleCancel"></GroupList>
 </template>

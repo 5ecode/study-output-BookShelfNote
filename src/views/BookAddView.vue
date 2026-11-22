@@ -1,8 +1,8 @@
 <!-- src/views/BookAddView.vue -->
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { useBookStore } from '../stores/bookStore';
 import { BookPlus } from 'lucide-vue-next';
+import { useBookStore } from '../stores/bookStore';
 import AddBookForm from '../components/AddBookForm.vue';
 import IsbnSearchForm from '../components/IsbnSearchForm.vue';
 import SearchBookForm from '../components/SearchBookForm.vue';
@@ -40,35 +40,39 @@ function handleAddSelectedBooks(bookList: BookData[]) {
 </script>
 
 <template>
-  <h2 class="u-mb1 u-txtC"><BookPlus :size="28" style="vertical-align: sub;" />書籍を追加</h2>
-  <div class="tabNavi u-mb1">
-    <button v-bind:class="['tabBtn', { 'is-active': selected === 'search' }]" @click="selected = 'search'" v-bind:aria-pressed="selected === 'search'">作品名・著者名検索</button>
+<h2 class="u-mb1 u-txtC">
+  <BookPlus :size="28" style="vertical-align: sub;" />書籍を追加
+</h2>
+<div class="tabNavi u-mb1">
+  <button v-bind:class="['tabBtn', { 'is-active': selected === 'search' }]" @click="selected = 'search'" v-bind:aria-pressed="selected === 'search'">作品名・著者名検索</button>
 
-    <button v-bind:class="['tabBtn', { 'is-active': selected === 'isbn' }]" @click="selected = 'isbn'" v-bind:aria-pressed="selected === 'isbn'">ISBN検索</button>
+  <button v-bind:class="['tabBtn', { 'is-active': selected === 'isbn' }]" @click="selected = 'isbn'" v-bind:aria-pressed="selected === 'isbn'">ISBN検索</button>
 
-    <button v-bind:class="['tabBtn', { 'is-active': selected === 'manual' }]" @click="selected = 'manual'" v-bind:aria-pressed="selected === 'manual'">手入力</button>
-  </div>
+  <button v-bind:class="['tabBtn', { 'is-active': selected === 'manual' }]" @click="selected = 'manual'" v-bind:aria-pressed="selected === 'manual'">手入力</button>
+</div>
 
-  <SearchBookForm v-if="selected === 'search'" v-bind:reg-books="bookStore.books" v-on:books-added="handleAddSelectedBooks" />
-  <IsbnSearchForm v-else-if="selected === 'isbn'" v-bind:reg-books="bookStore.books" v-on:book-added="handleAddBook" v-on:scanned-books-added="handleAddSelectedBooks" />
-  <AddBookForm v-else v-bind:reg-books="bookStore.books" v-on:book-added="handleAddBook" />
+<SearchBookForm v-if="selected === 'search'" v-bind:reg-books="bookStore.books" v-on:books-added="handleAddSelectedBooks" />
+<IsbnSearchForm v-else-if="selected === 'isbn'" v-bind:reg-books="bookStore.books" v-on:book-added="handleAddBook" v-on:scanned-books-added="handleAddSelectedBooks" />
+<AddBookForm v-else v-bind:reg-books="bookStore.books" v-on:book-added="handleAddBook" />
 
-  <div v-if="selected !== 'manual'" class="supportedBlock">
-    <!-- Rakuten Web Services Attribution Snippet FROM HERE -->
-    <a href="https://developers.rakuten.com/" target="_blank">Supported by Rakuten Developers</a>
-    <!-- Rakuten Web Services Attribution Snippet TO HERE -->
-  </div>
+<div v-if="selected !== 'manual'" class="supportedBlock">
+  <!-- Rakuten Web Services Attribution Snippet FROM HERE -->
+  <a href="https://developers.rakuten.com/" target="_blank">Supported by Rakuten Developers</a>
+  <!-- Rakuten Web Services Attribution Snippet TO HERE -->
+</div>
 </template>
 
 <style lang="scss" scoped>
 .tabNavi {
   display: flex;
   gap: 10px;
+
   @media screen and (min-width: 540px) {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
 .tabBtn {
   display: flex;
   align-items: center;
@@ -80,19 +84,23 @@ function handleAddSelectedBooks(bookList: BookData[]) {
   cursor: pointer;
   user-select: none;
   transition: border-color .3s, background-color .3s;
+
   &:hover,
   &.is-active {
     border-color: $subColor;
     background: $subColor;
     color: #fff;
   }
-  &:focus-visible{
+
+  &:focus-visible {
     outline-color: $mainColor;
   }
 }
+
 .supportedBlock {
   text-align: center;
   font-size: rem(14);
+
   a:hover {
     text-decoration: underline;
   }

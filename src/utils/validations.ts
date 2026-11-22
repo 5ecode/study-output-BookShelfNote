@@ -3,11 +3,11 @@
 import type { BookData } from '../types';
 
 interface errors {
-  isbn?: string,
-  image?: string,
-  book?: string,
-  title?: string,
-  date?: string,
+  isbn?: string;
+  image?: string;
+  book?: string;
+  title?: string;
+  date?: string;
 }
 
 export function validate(form: BookData, errors: errors) {

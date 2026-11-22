@@ -34,7 +34,7 @@ export function useBookCover(registeredBooks: BookWithId[], editId: number | nul
 
     try {
       const cover = await fetchBookCover(inputIsbn);
-      if(cover){
+      if (cover) {
         bookCoverUrl.value = cover;
       } else {
         errors.image = 'ISBNに紐づく画像が見つかりませんでした。';
@@ -48,18 +48,14 @@ export function useBookCover(registeredBooks: BookWithId[], editId: number | nul
 
   // ISBN重複チェック
   function isAlreadyAdded(isbn: string) {
-    if(editbookId){
-      return registeredBooks.some(book =>
-        editbookId !== book.id && book.isbn === isbn,
-      );
+    if (editbookId) {
+      return registeredBooks.some((book) => editbookId !== book.id && book.isbn === isbn);
     } else {
-      return registeredBooks.some(book =>
-        book.isbn === isbn,
-      );
+      return registeredBooks.some((book) => book.isbn === isbn);
     }
   }
 
-  function removeCover(){
+  function removeCover() {
     bookCoverUrl.value = '';
   }
 

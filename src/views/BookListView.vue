@@ -1,12 +1,16 @@
 <!-- src/views/BookListView.vue -->
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { LibraryBig, Search } from 'lucide-vue-next';
+import { UNKNOWN_AUTHOR, UNREGISTERED_SERIES } from '../constants/book';
 import { useBookStore } from '../stores/bookStore';
 import { useUiStore } from '../stores/uiStore';
 import { useModal } from '../composables/useModal';
-import { LibraryBig, Search } from 'lucide-vue-next';
+import { sortByReleaseDate } from '../utils/sortByReleaseDate';
 import BookDetailModal from '../components/BookDetailModal.vue';
 import BookItem from '../components/BookItem.vue';
+import BookGroupList from '../components/BookGroupList.vue';
+import type { BookWithId } from '../types';
 
 /* constant
 ---------------------------------- */
@@ -15,29 +19,68 @@ const bookStore = useBookStore();
 
 /* reactivity
 ---------------------------------- */
-const filterMode = ref<'all' | 'lent' | 'returned' | 'search'>('all');
+const filterMode = ref<'all' | 'author' | 'series' | 'lent' | 'returned' | 'search'>('all');
 const searchQuery = ref('');
 
 /* computed
 ---------------------------------- */
 // 表示フィルター
-const filteredBooks = computed(() => {
+const displayBooks = computed(() => {
   switch (filterMode.value) {
-  case 'lent':
-    return bookStore.books.filter(book => book.lentStatus === 'lent');
-  case 'returned':
-    return bookStore.books.filter(book => book.lentStatus === 'returned');
-  case 'search':
-    return bookStore.books.filter(book => {
-      const query = searchQuery.value.toLowerCase();
-      return (
-        book.title.toLowerCase().includes(query) ||
-          book.authors.some(author => author.toLowerCase().includes(query))
-      );
-    });
-  default:
-    return bookStore.books;
+    case 'lent':
+      return bookStore.books.filter((book) => book.lentStatus === 'lent');
+    case 'returned':
+      return bookStore.books.filter((book) => book.lentStatus === 'returned');
+    case 'search':
+      return bookStore.books.filter((book) => {
+        const query = searchQuery.value.toLowerCase();
+        return book.title.toLowerCase().includes(query) || book.authors.some((author) => author.toLowerCase().includes(query));
+      });
+    default:
+      return bookStore.books;
   }
+});
+
+// 著者別、シリーズ別
+const booksByField = computed(() => {
+  const sortedBooks = sortByReleaseDate(bookStore.books);
+  let groupName: string;
+
+  const listByField = sortedBooks.reduce<Record<string, BookWithId[]>>((acc, book) => {
+    if (filterMode.value === 'author') {
+      if (book.authors.length > 0) {
+        book.authors.forEach((author) => {
+          // まだその著者の配列がなければ初期化する
+          if (!acc[author]) {
+            acc[author] = [];
+          }
+
+          // その著者のリストに現在の本を追加する
+          acc[author].push(book);
+        });
+
+        return acc;
+      } else {
+        groupName = UNKNOWN_AUTHOR;
+      }
+    } else if (filterMode.value === 'series') {
+      groupName = book.seriesName ? book.seriesName : UNREGISTERED_SERIES;
+    } else {
+      return acc;
+    }
+
+    // そのkeyの配列が存在しなければ初期化
+    if (!acc[groupName]) {
+      acc[groupName] = [];
+    }
+
+    // そのKeyの配列に書籍データを追加
+    acc[groupName].push(book);
+
+    return acc;
+  }, {});
+
+  return listByField;
 });
 
 /* lifecycle hooks
@@ -74,35 +117,41 @@ const {
 </script>
 
 <template>
-  <div class="listArea">
-    <div class="listArea_header u-mb2">
-      <h2 class="u-txtC"><LibraryBig :size="28" style="vertical-align: sub;" />書籍リスト</h2>
-      <select v-model="filterMode" class="c-select">
-        <option value="all">全ての書籍</option>
-        <option value="lent">貸出中</option>
-        <option value="returned">貸出済</option>
-        <option value="search">検索</option>
-      </select>
-      <div v-if="filterMode === 'search'" class="inputIcoWrap u-txtC">
-        <Search /><input v-model="searchQuery" type="text" placeholder="タイトルや著者名で検索" class="inputFilterTxt">
-      </div>
-    </div>
-
-    <BookItem v-bind:books="filteredBooks" v-bind:list-mode="uiStore.listMode" v-on:detail-opened="openDetailModal" v-on:edit-opened="openEditModal" v-on:confirm-delete-opened="openDeleteModal" />
-
-    <div v-if="filteredBooks.length === 0" class="noBooks u-txtC">
-      <p class="u-mb1">該当する書籍が見つかりませんでした。</p>
-      <!-- Rakuten Web Services Attribution Snippet FROM HERE -->
-      <p><a href="https://developers.rakuten.com/" target="_blank">Supported by Rakuten Developers</a></p>
-      <!-- Rakuten Web Services Attribution Snippet TO HERE -->
+<div class="listArea">
+  <div class="listArea_header u-mb2">
+    <h2 class="u-txtC">
+      <LibraryBig :size="28" style="vertical-align: sub" />書籍リスト
+    </h2>
+    <select v-model="filterMode" class="c-select">
+      <option value="all">全ての書籍</option>
+      <option value="author">著者別</option>
+      <option value="series">シリーズ別</option>
+      <option value="lent">貸出中</option>
+      <option value="returned">貸出済</option>
+      <option value="search">検索</option>
+    </select>
+    <div v-if="filterMode === 'search'" class="inputIcoWrap u-txtC">
+      <Search /><input v-model="searchQuery" type="text" placeholder="タイトルや著者名で検索" class="inputFilterTxt" />
     </div>
   </div>
 
-  <div v-if="uiStore.listMode === 'delete' && filteredBooks.length > 0" class="reset u-txtC">
-    <button class="c-btn c-btn--secondary" v-on:click="reset">リストを削除</button>
-  </div>
+  <BookItem v-if="filterMode !== 'author' && filterMode !== 'series'" v-bind:books="displayBooks" v-bind:list-mode="uiStore.listMode" v-on:detail-opened="openDetailModal" v-on:edit-opened="openEditModal" v-on:confirm-delete-opened="openDeleteModal" />
 
-  <BookDetailModal v-bind:is-show="showDetailModal" v-bind:book="detailTargetBook" v-bind:modal-mode="modalMode" v-on:modal-closed="closeModal" v-on:edit-opened="switchToEdit" v-on:confirm-delete-opened="switchToConfirmDelete" v-on:book-updated="updateBook" v-on:book-deleted="deleteBook" />
+  <BookGroupList v-if="filterMode === 'author' || filterMode === 'series'" v-bind:books="booksByField" v-bind:filter-mode="filterMode" />
+
+  <div v-if="displayBooks.length === 0" class="noBooks u-txtC">
+    <p class="u-mb1">該当する書籍が見つかりませんでした。</p>
+    <!-- Rakuten Web Services Attribution Snippet FROM HERE -->
+    <p><a href="https://developers.rakuten.com/" target="_blank">Supported by Rakuten Developers</a></p>
+    <!-- Rakuten Web Services Attribution Snippet TO HERE -->
+  </div>
+</div>
+
+<div v-if="uiStore.listMode === 'delete' && displayBooks.length > 0" class="reset u-txtC">
+  <button class="c-btn c-btn--secondary" v-on:click="reset">リストを削除</button>
+</div>
+
+<BookDetailModal v-bind:is-show="showDetailModal" v-bind:book="detailTargetBook" v-bind:modal-mode="modalMode" v-on:modal-closed="closeModal" v-on:edit-opened="switchToEdit" v-on:confirm-delete-opened="switchToConfirmDelete" v-on:book-updated="updateBook" v-on:book-deleted="deleteBook" />
 </template>
 
 <style lang="scss" scoped>
@@ -115,6 +164,7 @@ const {
 
 .inputIcoWrap {
   position: relative;
+
   .lucide {
     position: absolute;
     z-index: 1;

@@ -1,11 +1,11 @@
 @charset "utf-8";
 @use "@/styles/setting" as *;
+
 /*--------------------------------------------------------------------
   structure : フッター
 ----------------------------------------------------------------------*/
-.st-{
-  &footerCopy {
-    padding-bottom: .5em;
-    text-align: center;
-  }
+.st-footerCopy {
+  padding-bottom: .5em;
+  text-align: center;
 }
+

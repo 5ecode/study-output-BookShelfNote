@@ -16,12 +16,14 @@ const routes: RouteRecordRaw[] = [
     name: 'BookAdd',
     component: BookAddView,
   },
-  { path: '/series/:series',
+  {
+    path: '/series/:series',
     name: 'Series',
     component: SeriesView,
     props: true,
   },
-  { path: '/author/:author',
+  {
+    path: '/author/:author',
     name: 'Author',
     component: AuthorView,
     props: true,

@@ -1,7 +1,8 @@
 <!-- src/components/GroupList.vue -->
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { BookCheck } from 'lucide-vue-next';
+import { UNKNOWN_AUTHOR, UNREGISTERED_SERIES } from '../constants/book';
 import { useModal } from '../composables/useModal';
 import BookItem from '../components/BookItem.vue';
 import BookDetailModal from '../components/BookDetailModal.vue';
@@ -12,7 +13,7 @@ import type { ListMode, BookWithId } from '../types';
 const props = defineProps<{
   books: BookWithId[]
   groupTitle: string
-  listMode: ListMode;
+  listMode: ListMode
   modelValue: 'new' | 'old'
 }>();
 
@@ -29,6 +30,13 @@ const emit = defineEmits<{
 ---------------------------------- */
 const editTitle = ref(props.groupTitle);
 
+/* computed
+---------------------------------- */
+// 新刊チェックボタンの表示/非表示
+const showNewBookCheckBtn = computed(() => {
+  return (props.groupTitle !== UNKNOWN_AUTHOR && props.groupTitle !== UNREGISTERED_SERIES);
+});
+
 /* watch
 ---------------------------------- */
 // props.groupTitle が変わったら入力欄も更新
@@ -38,6 +46,18 @@ watch(() => props.groupTitle, (newVal) => {
 
 /* function
 ---------------------------------- */
+// 変更を保存
+function emitEditing(newTitle: string) {
+  emit('title-saved', newTitle);
+  editTitle.value = props.groupTitle;
+}
+
+// 編集キャンセル
+function cancelEditing() {
+  emit('list-mode-chenged', 'view');
+  editTitle.value = props.groupTitle;
+}
+
 // モーダル用ロジック
 const {
   showDetailModal,
@@ -50,57 +70,55 @@ const {
   updateBook,
   deleteBook,
   openEditModal,
-  openDeleteModal } = useModal();
-
-// 編集キャンセル
-function cancelEditing() {
-  editTitle.value = props.groupTitle;
-  emit('list-mode-chenged', 'view');
-}
+  openDeleteModal,
+} = useModal();
 </script>
 
 <template>
-  <div class="peagHead">
-    <h2 v-if="listMode !== 'edit'" class="title">{{ groupTitle }}</h2>
-    <div v-else class="editHolder">
-      <input v-model="editTitle" class="c-input">
-      <div class="editHolder_control u-txtR">
-        <button class="c-btn c-btn--secondary" v-on:click="cancelEditing"> キャンセル </button>
-        <button class="c-btn c-btn--primary" v-on:click="$emit('title-saved', editTitle)"> 保存 </button>
-      </div>
+<div class="peagHead">
+  <h2 v-if="listMode !== 'edit'" class="title">{{ groupTitle }}</h2>
+  <div v-else class="editHolder">
+    <input v-model="editTitle" class="c-input" />
+    <div class="editHolder_control u-txtR">
+      <button class="c-btn c-btn--secondary" v-on:click="cancelEditing">キャンセル</button>
+      <button class="c-btn c-btn--primary" v-on:click="emitEditing(editTitle)">保存</button>
     </div>
   </div>
+</div>
 
-  <div class="listHead u-mb1">
-    <div class="sortNavi">
-      <label><input type="radio" v-bind:checked="modelValue === 'new'" value="new" v-on:change="$emit('update:modelValue', 'new')">新しい順</label>
-      <label><input type="radio" v-bind:checked="modelValue === 'old'" value="'old'" v-on:change="$emit('update:modelValue', 'old')">古い順</label>
-    </div>
-    <button class="icoBtn" v-on:click="$emit('new-book-checked')"><BookCheck />新刊CHECK</button>
+<div class="listHead u-mb1">
+  <div class="sortNavi">
+    <label><input type="radio" v-bind:checked="modelValue === 'new'" value="new" v-on:change="$emit('update:modelValue', 'new')">新しい順</label>
+    <label><input type="radio" v-bind:checked="modelValue === 'old'" value="'old'" v-on:change="$emit('update:modelValue', 'old')">古い順</label>
   </div>
+  <button v-if="showNewBookCheckBtn" class="icoBtn" v-on:click="$emit('new-book-checked')">
+    <BookCheck />新刊CHECK
+  </button>
+</div>
 
-  <BookItem v-bind:books="books" v-bind:list-mode="listMode" v-on:detail-opened="openDetailModal" v-on:edit-opened="openEditModal" v-on:confirm-delete-opened="openDeleteModal" />
+<BookItem v-bind:books="books" v-bind:list-mode="listMode" v-on:detail-opened="openDetailModal" v-on:edit-opened="openEditModal" v-on:confirm-delete-opened="openDeleteModal" />
 
-  <BookDetailModal v-bind:is-show="showDetailModal" v-bind:book="detailTargetBook" v-bind:modal-mode="modalMode" v-on:modal-closed="closeModal" v-on:edit-opened="switchToEdit" v-on:confirm-delete-opened="switchToConfirmDelete" v-on:book-updated="updateBook" v-on:book-deleted="deleteBook" />
+<BookDetailModal v-bind:is-show="showDetailModal" v-bind:book="detailTargetBook" v-bind:modal-mode="modalMode" v-on:modal-closed="closeModal" v-on:edit-opened="switchToEdit" v-on:confirm-delete-opened="switchToConfirmDelete" v-on:book-updated="updateBook" v-on:book-deleted="deleteBook" />
 </template>
 
 <style lang="scss" scoped>
-.title{
+.title {
   font-size: rem(20);
 }
 
-.editHolder{
+.editHolder {
   display: grid;
   gap: 10px;
   margin-bottom: 10px;
-  &_control{
+
+  &_control {
     display: flex;
     justify-content: end;
     gap: 10px;
   }
 }
 
-.listHead{
+.listHead {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -109,12 +127,12 @@ function cancelEditing() {
   border-top: 1px solid $baseColor;
 }
 
-.sortNavi{
+.sortNavi {
   display: flex;
   gap: 10px;
 }
 
-.icoBtn{
+.icoBtn {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -125,11 +143,13 @@ function cancelEditing() {
   font-weight: bold;
   color: $mainColor;
   line-height: 1;
-  &:hover{
+
+  &:hover {
     background: $mainColor;
     color: #fff;
   }
-  &:focus-visible{
+
+  &:focus-visible {
     outline-color: $mainColor;
     outline-offset: -2px;
   }

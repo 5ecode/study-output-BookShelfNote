@@ -1,25 +1,26 @@
 <!-- src/components/SearchList.vue -->
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { UNKNOWN_AUTHOR } from '../constants/book';
 import type { BookData, CombinedBookData } from '../types';
 
 /* props
 ---------------------------------- */
 const props = defineProps<{
-	books: CombinedBookData[];
+  books: CombinedBookData[]
   regBooks: {
-    title: string;
-    authors: string[];
-    date: string | null;
-    isbn: string | null;
-  }[];
+    title: string
+    authors: string[]
+    date: string | null
+    isbn: string | null
+  }[]
 }>();
 
 /* emit
 ---------------------------------- */
 const emit = defineEmits<{
   (e: 'books-added', books: BookData[]): void;
-	(e: 'search-reset'): void;
+  (e: 'search-reset'): void;
 }>();
 
 /* reactivity
@@ -32,8 +33,8 @@ const notify = ref('');
 // すべて選択/解除切替
 const allSelected = computed({
   // 未登録リストの数と選択中の数が同じかどうか
-  get(){
-    const selectableBooks = props.books.filter(book => !isAlreadyAdded(book));
+  get() {
+    const selectableBooks = props.books.filter((book) => !isAlreadyAdded(book));
     return (
       selectableBooks.length > 0 &&
       selectedIds.value.length === selectableBooks.length
@@ -43,8 +44,8 @@ const allSelected = computed({
   set(checked: boolean) {
     if (checked) {
       selectedIds.value = props.books
-        .filter(book => !isAlreadyAdded(book))
-        .map(book => book.isbn);
+        .filter((book) => !isAlreadyAdded(book))
+        .map((book) => book.isbn);
     } else {
       selectedIds.value = [];
     }
@@ -58,20 +59,24 @@ function isAlreadyAdded(book: CombinedBookData) {
   const bookAuthors = formatStringToArray(book.author) ?? [];
   const bookDate = formatSalesDate(book.salesDate);
 
-  return props.regBooks.some(b =>
-    (b.isbn
-      ? b.isbn === book.isbn
-      : b.title === book.title &&
+  // ISBNがあればISBN、なければタイトル・著者・発売日で判定
+  return props.regBooks.some((b) => {
+    if (b.isbn) {
+      return b.isbn === book.isbn;
+    } else {
+      return (
+        b.title === book.title &&
         JSON.stringify(b.authors ?? []) === JSON.stringify(bookAuthors) &&
         b.date === bookDate
-    ),
-  );
+      );
+    }
+  });
 }
 
 // 著者表示調整
-function adjustAuthors(authors:string){
+function adjustAuthors(authors: string) {
   const author = formatStringToArray(authors);
-  if(author.length >= 3){
+  if (author.length >= 3) {
     return `${author.slice(0, 2).join(', ')}, 他…`;
   } else {
     return author.join(', ');
@@ -100,7 +105,12 @@ function formatStringToArray(value: string | null) {
   if (typeof value !== 'string') {
     return [];
   }
-  return value.replace(/\s+/g, '').split('/').map(value => value.trim()).filter(value => value.length > 0);
+
+  return value
+    .replace(/\s+/g, '')
+    .split('/')
+    .map((value) => value.trim())
+    .filter((value) => value.length > 0);
 }
 
 // 送るデータを成型
@@ -117,17 +127,19 @@ function convertToBookData(book: CombinedBookData): BookData {
 }
 
 // 選択した書籍を追加
-function addSelectedBooks(){
-  if(!props.books) return false;
-  const selectedBooks = props.books.filter(book =>
-    selectedIds.value.includes(book.isbn),
-  ).map(convertToBookData);
+function addSelectedBooks() {
+  if (!props.books) return false;
+
+  const selectedBooks = props.books
+    .filter((book) => selectedIds.value.includes(book.isbn))
+    .map(convertToBookData);
+
   emit('books-added', selectedBooks);
   selectedIds.value = [];
 }
 
 // 検索結果リセット
-function resetSearch(){
+function resetSearch() {
   emit('search-reset');
   selectedIds.value = [];
   notify.value = '';
@@ -135,37 +147,38 @@ function resetSearch(){
 </script>
 
 <template>
-  <div class="resultsWrap">
-    <div class="stickyHolder u-txtC">
-      <label><input v-model="allSelected" type="checkbox">すべて選択</label>
-    </div>
-
-    <ul class="searchList">
-      <li v-for="book in books" v-bind:id="book.isbn" v-bind:key="book.isbn" class="searchList_item" v-bind:class="isAlreadyAdded(book)? 'is-registered': ''">
-        <label class="itemLabel">
-          <span class="itemLabel_input"><input v-model="selectedIds" type="checkbox" v-bind:value="book.isbn" v-bind:disabled="isAlreadyAdded(book)"></span>
-          <span class="itemLabel_cover"><span class="bookCover"><img v-if="book.imageUrl" v-bind:src="book.imageUrl" alt="書影"></span></span>
-          <span class="itemLabel_title"><b>{{ book.title }}</b></span>
-          <span class="itemLabel_authors">{{ book.author ? adjustAuthors(book.author) : '著者不明' }}</span>
-        </label>
-      </li>
-    </ul>
-
-    <slot name="more"></slot>
+<div class="resultsWrap">
+  <div class="stickyHolder u-txtC">
+    <label><input v-model="allSelected" type="checkbox">すべて選択</label>
   </div>
 
-  <div class="addControl">
-    <div class="addControl_btns u-txtC">
-      <button class="c-btn c-btn--secondary u-ml1" v-on:click="resetSearch">リセット</button>
-      <button class="c-btn c-btn--primary" v-on:click="addSelectedBooks">選択した書籍を追加</button>
-    </div>
+  <ul class="searchList">
+    <li v-for="book in books" v-bind:id="book.isbn" v-bind:key="book.isbn" class="searchList_item" v-bind:class="isAlreadyAdded(book) ? 'is-registered' : ''">
+      <label class="itemLabel">
+        <span class="itemLabel_input"><input v-model="selectedIds" type="checkbox" v-bind:value="book.isbn" v-bind:disabled="isAlreadyAdded(book)"></span>
+        <span class="itemLabel_cover"><span class="bookCover"><img v-if="book.imageUrl" v-bind:src="book.imageUrl" alt="書影"></span></span>
+        <span class="itemLabel_title"><b>{{ book.title }}</b></span>
+        <span class="itemLabel_authors">{{ book.author ? adjustAuthors(book.author) : UNKNOWN_AUTHOR }}</span>
+      </label>
+    </li>
+  </ul>
+
+  <slot name="more"></slot>
+</div>
+
+<div class="addControl">
+  <div class="addControl_btns u-txtC">
+    <button class="c-btn c-btn--secondary u-ml1" v-on:click="resetSearch">リセット</button>
+    <button class="c-btn c-btn--primary" v-on:click="addSelectedBooks">選択した書籍を追加</button>
   </div>
+</div>
 </template>
 
 <style lang="scss" scoped>
 .resultsWrap {
   margin-top: 20px;
-  @include mq(sm){
+
+  @include mq(sm) {
     flex: 1;
     overflow-y: auto;
     width: 100dvw;
@@ -174,20 +187,26 @@ function resetSearch(){
     background: #fff;
   }
 }
-.searchList{
+
+.searchList {
   margin-top: 20px;
-  @include mq(lg){
+
+  @include mq(lg) {
     max-width: 625px;
     margin-inline: auto;
   }
-  &_item{
+
+  &_item {
     width: 100%;
-    & + & {
+
+    &+& {
       margin-top: 10px;
     }
-    &.is-registered{
+
+    &.is-registered {
       position: relative;
-      &::before{
+
+      &::before {
         display: block;
         position: absolute;
         z-index: 1;
@@ -196,7 +215,8 @@ function resetSearch(){
         background: rgba(255, 255, 255, .5);
         content: "";
       }
-      &::after{
+
+      &::after {
         position: absolute;
         top: 50%;
         left: 15px;
@@ -210,7 +230,8 @@ function resetSearch(){
         font-weight: bold;
         line-height: 1;
         content: '登録済み';
-        @include mq(lg){
+
+        @include mq(lg) {
           left: 36px;
         }
       }
@@ -218,48 +239,56 @@ function resetSearch(){
   }
 }
 
-.itemLabel{
+.itemLabel {
   display: grid;
   grid-template-columns: 15px 70px auto;
   column-gap: 5px;
   line-height: 1.5;
-  @media screen and (min-width: 540px){
+
+  @media screen and (min-width: 540px) {
     grid-template-columns: 15px 100px auto;
     column-gap: 10px;
   }
-  &_input{
+
+  &_input {
     display: flex;
     align-items: center;
     grid-row: 1 / 3;
-    input[type="checkbox"]{
+
+    input[type="checkbox"] {
       margin: 0;
     }
   }
-  &_cover{
+
+  &_cover {
     display: flex;
     align-items: center;
     grid-row: 1 / 3;
     grid-column: 2 / 3;
   }
-  &_title{
+
+  &_title {
     display: flex;
     align-items: end;
     grid-row: 1 / 2;
     font-size: rem(14);
-    @media screen and (min-width: 540px){
+
+    @media screen and (min-width: 540px) {
       font-size: rem(16);
     }
   }
-  &_authors{
+
+  &_authors {
     grid-row: 2 / 3;
     font-size: rem(12);
-    @media screen and (min-width: 540px){
+
+    @media screen and (min-width: 540px) {
       font-size: rem(14);
     }
   }
 }
 
-.bookCover{
+.bookCover {
   display: block;
   overflow: hidden;
   position: relative;
@@ -268,7 +297,8 @@ function resetSearch(){
   height: auto;
   aspect-ratio: 1 / 1.414;
   font-size: rem(12);
-  &::after{
+
+  &::after {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -277,7 +307,8 @@ function resetSearch(){
     white-space: nowrap;
     content: 'no Image';
   }
-  img{
+
+  img {
     width: auto;
     height: 100%;
     margin: auto;
@@ -285,7 +316,7 @@ function resetSearch(){
   }
 }
 
-.addControl{
+.addControl {
   position: fixed;
   left: 0;
   bottom: 0;
@@ -293,11 +324,8 @@ function resetSearch(){
   width: 100%;
   border-top: 1px $subColor dotted;
   background: #fff;
-  @include mq(sm) {
-    // bottom: env(keyboard-inset-height, 0px);
-    // padding-bottom: env(safe-area-inset-bottom);
-  }
-  &_btns{
+
+  &_btns {
     display: flex;
     justify-content: center;
     gap: 10px;
@@ -305,7 +333,7 @@ function resetSearch(){
   }
 }
 
-.stickyHolder{
+.stickyHolder {
   position: sticky;
   top: -10px;
   z-index: 10;

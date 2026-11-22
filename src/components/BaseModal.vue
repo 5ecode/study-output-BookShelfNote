@@ -1,14 +1,14 @@
 <!-- src/components/BaseModal.vue -->
 <script setup lang="ts">
-import { X } from 'lucide-vue-next';
 import { ref, computed, watch } from 'vue';
+import { X } from 'lucide-vue-next';
 
 /* props
 ---------------------------------- */
-const props= defineProps<{
-  title?: string[] | '';
-  isShow: boolean;
-  showCloseButton?: boolean;
+const props = defineProps<{
+  title?: string[] | ''
+  isShow: boolean
+  showCloseButton?: boolean
 }>();
 
 /* emit
@@ -30,7 +30,7 @@ const modalRef = ref<HTMLDivElement | null>(null);
 /* computed
 ---------------------------------- */
 const titleColor = computed(() => {
-  if(!props.title) return '';
+  if (!props.title) return '';
   return allowedColors.includes(props.title[1] || '')
     ? props.title[1]
     : '#2c3e50'; // デフォルト値
@@ -59,7 +59,7 @@ function getFocusableElements(container: HTMLElement | null): HTMLElement[] {
     container.querySelectorAll<HTMLElement>(
       'a[href], button, input, select, [tabindex]:not([tabindex="-1"])',
     ),
-  ).filter(el => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'));
+  ).filter((el) => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'));
 }
 
 // モーダル内でフォーカスをループ
@@ -83,41 +83,44 @@ function trapFocus(event: KeyboardEvent) {
 </script>
 
 <template>
-  <div v-if="isShow" class="modalOverlay" v-on:click.self="$emit('modal-closed')" v-on:keydown="trapFocus" v-on:keydown.esc="$emit('modal-closed')">
-    <div ref="modalRef" role="dialog" aria-modal="true" v-bind:aria-labelledby="title ? titleId : undefined" v-bind:aria-label="title ? undefined : 'ダイアログ'" class="modalContent">
-      <div :class="['modalHeader',title? 'modalHeader--bdb': '']">
-        <h3 v-if="title" v-bind:id="titleId" v-bind:style="{ color: titleColor }">{{ title[0] }}</h3>
+<div v-if="isShow" class="modalOverlay" v-on:click.self="$emit('modal-closed')" v-on:keydown="trapFocus" v-on:keydown.esc="$emit('modal-closed')">
+  <div ref="modalRef" role="dialog" aria-modal="true" v-bind:aria-labelledby="title ? titleId : undefined" v-bind:aria-label="title ? undefined : 'ダイアログ'" class="modalContent">
+    <div :class="['modalHeader', title ? 'modalHeader--bdb' : '']">
+      <h3 v-if="title" v-bind:id="titleId" v-bind:style="{ color: titleColor }">{{ title[0] }}</h3>
 
-        <button v-if="showCloseButton" class="closeBtn u-mlAuto" v-on:click="$emit('modal-closed')" aria-label="閉じる"><X :size="28" /></button>
-      </div>
-      <div class="modalBody">
-        <slot></slot>
-      </div>
-      <div class="modalButtons">
-        <slot name="actions"></slot>
-      </div>
+      <button v-if="showCloseButton" class="closeBtn u-mlAuto" v-on:click="$emit('modal-closed')" aria-label="閉じる">
+        <X :size="28" />
+      </button>
+    </div>
+    <div class="modalBody">
+      <slot></slot>
+    </div>
+    <div class="modalButtons">
+      <slot name="actions"></slot>
     </div>
   </div>
+</div>
 </template>
 
 <style lang="scss">
-body.is-modal{
+body.is-modal {
   overflow: hidden;
 }
 
-.modalOverlay{
+.modalOverlay {
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
   position: fixed;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background: rgba(83, 192, 211, .8);
 }
 
-.modalContent{
+.modalContent {
   overflow-y: auto;
   width: 100%;
   max-width: 450px;
@@ -125,9 +128,8 @@ body.is-modal{
   height: 100%;
   padding: 20px;
   background: #fff;
-  @include mq(sm){
-  }
-  @media screen and (min-width: 430px){
+
+  @media screen and (min-width: 430px) {
     width: 95%;
     max-width: 500px;
     height: auto;
@@ -136,29 +138,30 @@ body.is-modal{
   }
 }
 
-.modalHeader{
+.modalHeader {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
   padding-bottom: 8px;
   line-height: 1.2;
-  &--bdb{
+
+  &--bdb {
     border-bottom: 1px solid #ccc;
   }
 }
 
-.modalBody{
+.modalBody {
   padding: 10px 0;
 }
 
-.modalButtons{
+.modalButtons {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-top: 15px;
 }
 
-.closeBtn{
+.closeBtn {
   display: flex;
   background: none;
   border: none;

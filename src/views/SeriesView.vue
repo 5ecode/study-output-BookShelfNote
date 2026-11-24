@@ -4,6 +4,7 @@ import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { UNREGISTERED_SERIES } from '../constants/book';
 import { useBookStore } from '../stores/bookStore';
+import { useFilterStore } from '../stores/FilterStore';
 import { useUiStore } from '../stores/uiStore';
 import { normalizeDate } from '../utils/normalizeDate';
 import GroupList from '../components/GroupList.vue';
@@ -20,6 +21,7 @@ const props = defineProps<{
 const uiStore = useUiStore();
 const router = useRouter();
 const bookStore = useBookStore();
+const filterStore = useFilterStore();
 
 /* reactivity
 ---------------------------------- */
@@ -44,6 +46,7 @@ const filteredBooks = computed(() =>
 ---------------------------------- */
 onMounted(() => {
   bookStore.loadFromStorage();
+  filterStore.setFilterMode('series');
 });
 
 /* function

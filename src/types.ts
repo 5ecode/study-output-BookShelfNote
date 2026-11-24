@@ -6,6 +6,9 @@ export type LentStatus = 'none' | 'lent' | 'returned';
 // 表示モード
 export type ListMode = 'view' | 'edit' | 'delete' | 'rent';
 
+// フィルターモード
+export type FilterMode = 'all' | 'author' | 'series' | 'lent' | 'returned' | 'search';
+
 // 書籍データの共通型
 export interface BookData {
   title: string;

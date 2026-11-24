@@ -4,6 +4,7 @@ import { ref, computed, onMounted } from 'vue';
 import { LibraryBig, Search } from 'lucide-vue-next';
 import { UNKNOWN_AUTHOR, UNREGISTERED_SERIES } from '../constants/book';
 import { useBookStore } from '../stores/bookStore';
+import { useFilterStore } from '../stores/FilterStore';
 import { useUiStore } from '../stores/uiStore';
 import { useModal } from '../composables/useModal';
 import { sortByReleaseDate } from '../utils/sortByReleaseDate';
@@ -16,28 +17,30 @@ import type { BookWithId } from '../types';
 ---------------------------------- */
 const uiStore = useUiStore();
 const bookStore = useBookStore();
+const filterStore = useFilterStore();
 
 /* reactivity
 ---------------------------------- */
-const filterMode = ref<'all' | 'author' | 'series' | 'lent' | 'returned' | 'search'>('all');
 const searchQuery = ref('');
 
 /* computed
 ---------------------------------- */
 // 表示フィルター
 const displayBooks = computed(() => {
-  switch (filterMode.value) {
+  const sortedBooks = sortByReleaseDate(bookStore.books);
+  console.log(1);
+  switch (filterStore.filterMode) {
     case 'lent':
-      return bookStore.books.filter((book) => book.lentStatus === 'lent');
+      return sortedBooks.filter((book) => book.lentStatus === 'lent');
     case 'returned':
-      return bookStore.books.filter((book) => book.lentStatus === 'returned');
+      return sortedBooks.filter((book) => book.lentStatus === 'returned');
     case 'search':
-      return bookStore.books.filter((book) => {
+      return sortedBooks.filter((book) => {
         const query = searchQuery.value.toLowerCase();
         return book.title.toLowerCase().includes(query) || book.authors.some((author) => author.toLowerCase().includes(query));
       });
     default:
-      return bookStore.books;
+      return sortedBooks;
   }
 });
 
@@ -47,7 +50,7 @@ const booksByField = computed(() => {
   let groupName: string;
 
   const listByField = sortedBooks.reduce<Record<string, BookWithId[]>>((acc, book) => {
-    if (filterMode.value === 'author') {
+    if (filterStore.filterMode === 'author') {
       if (book.authors.length > 0) {
         book.authors.forEach((author) => {
           // まだその著者の配列がなければ初期化する
@@ -63,7 +66,7 @@ const booksByField = computed(() => {
       } else {
         groupName = UNKNOWN_AUTHOR;
       }
-    } else if (filterMode.value === 'series') {
+    } else if (filterStore.filterMode === 'series') {
       groupName = book.seriesName ? book.seriesName : UNREGISTERED_SERIES;
     } else {
       return acc;
@@ -122,7 +125,7 @@ const {
     <h2 class="u-txtC">
       <LibraryBig :size="28" style="vertical-align: sub" />書籍リスト
     </h2>
-    <select v-model="filterMode" class="c-select">
+    <select v-model="filterStore.filterMode" class="c-select">
       <option value="all">全ての書籍</option>
       <option value="author">著者別</option>
       <option value="series">シリーズ別</option>
@@ -130,14 +133,14 @@ const {
       <option value="returned">貸出済</option>
       <option value="search">検索</option>
     </select>
-    <div v-if="filterMode === 'search'" class="inputIcoWrap u-txtC">
+    <div v-if="filterStore.filterMode === 'search'" class="inputIcoWrap u-txtC">
       <Search /><input v-model="searchQuery" type="text" placeholder="タイトルや著者名で検索" class="inputFilterTxt" />
     </div>
   </div>
 
-  <BookItem v-if="filterMode !== 'author' && filterMode !== 'series'" v-bind:books="displayBooks" v-bind:list-mode="uiStore.listMode" v-on:detail-opened="openDetailModal" v-on:edit-opened="openEditModal" v-on:confirm-delete-opened="openDeleteModal" />
+  <BookItem v-if="filterStore.filterMode !== 'author' && filterStore.filterMode !== 'series'" v-bind:books="displayBooks" v-bind:list-mode="uiStore.listMode" v-on:detail-opened="openDetailModal" v-on:edit-opened="openEditModal" v-on:confirm-delete-opened="openDeleteModal" />
 
-  <BookGroupList v-if="filterMode === 'author' || filterMode === 'series'" v-bind:books="booksByField" v-bind:filter-mode="filterMode" />
+  <BookGroupList v-if="filterStore.filterMode === 'author' || filterStore.filterMode === 'series'" v-bind:books="booksByField" v-bind:filter-mode="filterStore.filterMode" />
 
   <div v-if="displayBooks.length === 0" class="noBooks u-txtC">
     <p class="u-mb1">該当する書籍が見つかりませんでした。</p>

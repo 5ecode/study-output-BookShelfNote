@@ -27,18 +27,20 @@ const searchQuery = ref('');
 ---------------------------------- */
 // 表示フィルター
 const displayBooks = computed(() => {
+  const sortedBooks = sortByReleaseDate(bookStore.books);
+  console.log(1);
   switch (filterStore.filterMode) {
     case 'lent':
-      return bookStore.books.filter((book) => book.lentStatus === 'lent');
+      return sortedBooks.filter((book) => book.lentStatus === 'lent');
     case 'returned':
-      return bookStore.books.filter((book) => book.lentStatus === 'returned');
+      return sortedBooks.filter((book) => book.lentStatus === 'returned');
     case 'search':
-      return bookStore.books.filter((book) => {
+      return sortedBooks.filter((book) => {
         const query = searchQuery.value.toLowerCase();
         return book.title.toLowerCase().includes(query) || book.authors.some((author) => author.toLowerCase().includes(query));
       });
     default:
-      return bookStore.books;
+      return sortedBooks;
   }
 });
 
